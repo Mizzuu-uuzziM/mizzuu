@@ -59,6 +59,8 @@ Jika ingin menjadi contributor atau mengetahui seputar update script ini silahka
 
 ## Request?
 
-|     Name     | Email                         |
+|     Name     | Contact                         |
 | :----------: | :------------------------------ |
-| TanakaDomp | Contact me! tanakadomp@gmail.com |
+| TanakaDomp | tanakadomp@gmail.com |
+| :----------: | :------------------------------ |
+| Mizzuu.html | | diouy91@gmail.com |
