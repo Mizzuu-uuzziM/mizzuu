@@ -1,6 +1,6 @@
-**🐝 Lilychanj.js | 1.0.0** | ***© TanakaDomp***
+**Mizzuu • Assistant | 0.0.1** | ***Base Lilychan***
 
-![Logo](https://files.catbox.moe/rdyhja.jpg)
+![Logo](https://files.catbox.moe/n60pjq.jpg)
 
 ```> Simple WhatsApp bot Using Library Baileys```
 
