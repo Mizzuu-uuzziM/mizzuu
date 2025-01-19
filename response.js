@@ -120,6 +120,29 @@ async function dellCase(filePath, caseNameToRemove) {
         });
     });
 }
+async function loading () {
+var genalpa = [
+"M",
+"Mizz",
+"\n\nMizzuu\n\n",
+"\n\nMizzuu • A\n\n",
+"\n\nMizzuu • Assistant\n\n",
+"\n\n```Error⚠️...```\n\n",
+"\n\n```Error⚠️.```\n\n",
+"\n\n```Error⚠️...```\n\n",
+"\n\n♻️Mizzuu • Assistant Actived\n\n"
+]
+let { key } = await lilychan.sendMessage(m.chat, {text: 'Mizzuu • Assistant'})
+
+const pickRandom = (arr) => {
+return arr[Math.floor(Math.random() * arr.length)]
+}
+
+for (let i = 0; i < genalpa.length; i++) {
+await sleep(20)
+await lilychan.sendMessage(m.chat, {text: genalpa[i], edit: key });
+}
+}
 
 const totalFitur = () => {
     var mytext = fs.readFileSync("./message.js").toString();
@@ -154,6 +177,7 @@ const he = `┊       ┊       ┊     ┊  . ࣪☾⭑
 ┊       ┊  .  ★.˚
 ┊  .   ˚☆
  ࣪⊹`
+var badword = ['kontol','kntl']
 /**
 * Remove Background Image
 * Created at 03-06-2024
@@ -254,11 +278,364 @@ let list_staff = [];
   let name_staff = await lilychan.getName(i + "@s.whatsapp.net")   
     list_staff.push({
       displayName: await lilychan.getName(i + "@s.whatsapp.net"),
-      vcard: `BEGIN:VCARD\nVERSION:3.0\nN:${name_staff}\nFN:${name_staff}\nitem1.TEL;waid=${i}:${i}\nitem1.X-ABLabel:Hubungi staff kami 💬\nitem2.EMAIL;type=INTERNET:tanakadomp@gmail.com\nitem2.X-ABLabel:Email\nitem3.URL:https://www.tanakadomp.biz.id\nitem3.X-ABLabel:GitHub\nitem4.ADR:;;Indonesia;;;;\nitem4.X-ABLabel:Region\nEND:VCARD`
+      vcard: `BEGIN:VCARD\nVERSION:3.0\nN:${name_staff}\nFN:${name_staff}\nitem1.TEL;waid=${i}:${i}\nitem1.X-ABLabel:Hubungi staff kami 💬\nitem2.EMAIL;type=INTERNET:anonymous\nitem2.X-ABLabel:Email\nitem3.URL:https://github.com/Mizzuu-uuzziM\nitem3.X-ABLabel:GitHub\nitem4.ADR:;;Indonesia;;;;\nitem4.X-ABLabel:Region\nEND:VCARD`
     });
 }
   
 switch(command) {
+
+case'kerangajaib':{
+    if(!text)return m.reply('enter question')
+    var jawa = ['iya','mungkin iya','mungkin tidak','tidak']
+    let hama = jawa[Math.floor(Math.random() * jawa.length)]
+    const pesan = `
+°『 *\`🗿Kerang Ajaib🗿\`* 』°
+▬▭▬▭▬▭▬▭▬▭▬▭▬▭▬▭▬
+*Pertanyaan :* _${text}_
+*Jawaban :* _${hama}_
+
+`
+    lilychan.sendMessage(m.chat,{text: pesan,contextInfo: {mentionedJid: [m.sender], externalAdReply: {showAdAttribution: true, thumbnailUrl: global.thumbnail, title: `© ${global.ownername}`, body: null, sourceUrl: `${global.github}`, renderLargerThumbnail: true, mediaType: 1}}
+}, {quoted : lilychan.chat})
+}
+break
+case 'bratvid': {
+if (!isPremium && !isCreator) return m.reply('khusus owner & premium');
+    lilychan.sendMessage(m.chat,{react:{text:'📥',key:m.key}})
+const quo = args.length >= 1 ? args.join(" ") : m.quoted?.text || m.quoted?.caption || m.quoted?.description || null;
+  
+  if (!quo) return m.reply("masukan teksnya woii");
+  
+async function bratvid(text) {
+  try {
+    return await new Promise((resolve, reject) => {
+      if(!text) return reject("missing text input");
+      axios.get(`https://fgsi-brat.hf.space/?text=${text}&isVideo=true`, {
+        responseType: "arraybuffer"
+      }).then(res => {
+        const image = Buffer.from(res.data);
+        if(image.length <= 10240) return reject("failed generate brat");
+        return resolve({
+          success: true, 
+          image
+        })
+      })
+    })
+  } catch (e) {
+    return {
+      success: false,
+      errors: e
+    }
+  }
+}
+
+const buf = await bratvid(quo);
+await lilychan.sendVideoAsSticker(m.chat, buf.image, m, { packname: `${pushname}\n\n\n\n\n`, author: '\n\n\n\n\nMizzuu • Assistant'})
+    lilychan.sendMessage(m.chat,{react:{text:'📤', key:m.key}})
+}
+break
+case 'qcr':case'qcrandom':  {
+const quoteApi = require('@neoxr/quote-api')
+const { Sticker } = require('wa-sticker-formatter')
+if (!text) m.reply(`Example: ${prefix + command} halo`);
+let avatar = await lilychan.profilePictureUrl(m.sender, 'image').catch(_ => 'https://i.ibb.co/2WzLyGk/profile.jpg')
+let randomColor = ['#ccffff', '#ef1a11', '#89cff0', '#660000', '#87a96b', '#e9f6ff', '#ffe7f7', '#ca86b0', '#83a3ee', '#abcc88', '#80bd76', '#6a84bd', '#5d8d7f', '#530101', '#863434', '#013337', '#133700', '#2f3641', '#cc4291', '#7c4848', '#8a496b', '#722f37', '#0fc163', '#2f3641', '#e7a6cb', '#64c987', '#e6e6fa', '#ffa500','#2E4053'];
+const apiColor = randomColor[Math.floor(Math.random() * randomColor.length)];
+const json = {
+"type": "quote",
+"format": "png",
+"backgroundColor": apiColor,
+"width": 512,
+"height": 768,
+"scale": 2,
+"messages": [
+{
+"entities": [],
+"avatar": true,
+"from": {
+"id": 1,
+"name": pushname,
+"photo": {
+"url": avatar
+}
+},
+"text": text,
+"replyMessage": {}
+}
+]
+}
+
+async function createSticker(req, url, packName, authorName, quality) {
+let stickerMetadata = {
+type: 'full',
+pack: packName,
+author: authorName,
+quality
+}
+return (new Sticker(req ? req : url, stickerMetadata)).toBuffer()
+}
+
+const res = await quoteApi(json)
+const buffer = Buffer.from(res.image, 'base64')
+let stiker = await createSticker(buffer, false, `${pushname}\n\n\n\n\n`, "\n\n\n\n\nMizzuu • Assistant")
+lilychan.sendFile(m.chat, stiker, 'sticker.webp', '', m)
+}
+break
+case 'qc': {
+const quoteApi = require('@neoxr/quote-api')
+const { Sticker } = require('wa-sticker-formatter')
+if (!text) m.reply(`Example: ${prefix + command} halo`);
+let avatar = await lilychan.profilePictureUrl(m.sender, 'image').catch(_ => 'https://i.ibb.co/2WzLyGk/profile.jpg')
+
+const json = {
+"type": "quote",
+"format": "png",
+"backgroundColor": "#2E4053",
+"width": 512,
+"height": 768,
+"scale": 2,
+"messages": [
+{
+"entities": [],
+"avatar": true,
+"from": {
+"id": 1,
+"name": pushname,
+"photo": {
+"url": avatar
+}
+},
+"text": text,
+"replyMessage": {}
+}
+]
+}
+
+async function createSticker(req, url, packName, authorName, quality) {
+let stickerMetadata = {
+type: 'full',
+pack: packName,
+author: authorName,
+quality
+}
+return (new Sticker(req ? req : url, stickerMetadata)).toBuffer()
+}
+
+const res = await quoteApi(json)
+const buffer = Buffer.from(res.image, 'base64')
+let stiker = await createSticker(buffer, false, `${pushname}\n\n\n\n\n`, "\n\n\n\n\nMizzuu • Assistant")
+lilychan.sendFile(m.chat, stiker, 'sticker.webp', '', m)
+}
+break
+case "add": case "addmember":case'🤝': {
+if (!m.isGroup) return m.reply(msg.group)
+if (!args[0]) return m.reply("62838XXX")
+var teks = text.replace(/[^0-9]/g, '')+'@s.whatsapp.net'
+var cek = await lilychan.onWhatsApp(`${teks.split("@")[0]}`)
+if (cek.length < 1) return m.reply("Nomor Tersebut Tidak Terdaftar Di WhatsApp")
+if (!isBotAdmins || !groupMetadata.memberAddMode) return m.reply("Gagal Menambahkan Member, Karna Admin Tidak Mengizinkam Peserta Dapat Add Member")
+var a = await lilychan.groupParticipantsUpdate(m.chat, [teks], 'add')
+if (a[0].status == 200) return m.reply(`Berhasil Menambahkan ${teks.split("@")[0]} Kedalam Grup Ini`)
+if (a[0].status == 408) return m.reply(`Gagal Menambahkan ${teks.split("@")[0]} Ke Dalam Grup Ini, Karna Target Tidak Mengizinkan Orang Lain Dapat Menambahkan Dirinya Ke Dalam Grup`)
+if (a[0].status == 409) return m.reply(`Dia Sudah Ada Di Dalam Grup Ini!`)
+if (a[0].status == 403) return m.reply(`Gagal Menambahkan ${teks.split("@")[0]} Ke Dalam Grup Ini, Karna Target Tidak Mengizinkan Orang Lain Dapat Menambahkan Dirinya Ke Dalam Grup`)
+}
+break
+case "demote": case "demote": {
+if (!m.isGroup) return m.reply(msg.group)
+if(isAdmins) return m.reply('Lu bukan Admin Disini')
+if (m.quoted || text) {
+let target = m.mentionedJid[0] ? m.mentionedJid[0] : m.quoted ? m.quoted.sender : text.replace(/[^0-9]/g, '')+'@s.whatsapp.net'
+await lilychan.groupParticipantsUpdate(m.chat, [target], 'demote').then((res) => m.reply(`Berhasil Memberhentikan @${target.split("@")[0]} Sebagai Admin Grup Ini`)).catch((err) => m.reply(err.toString()))
+} else return m.reply('62838XXX')}
+break
+case "promote": case "promot": {
+if (!m.isGroup) return m.reply(msg.group)
+if(isAdmins)return m.reply('Lu bukan Admin Disini')
+if (m.quoted || text) {
+let target = m.mentionedJid[0] ? m.mentionedJid[0] : m.quoted ? m.quoted.sender : text.replace(/[^0-9]/g, '')+'@s.whatsapp.net'
+await lilychan.groupParticipantsUpdate(m.chat, [target], 'promote').then((res) => m.reply(`Berhasil Menjadikan @${target.split("@")[0]} Sebagai Admin Grup Ini`)).catch((err) => m.reply(err.toString()))
+} else return m.reply('62838XXX')}
+break
+case "close": {
+if (!m.isGroup) return m.reply('khusus gb')
+if (!isAdmins) return m.reply('lu bukan admin')
+await lilychan.groupSettingUpdate(m.chat, 'announcement')
+lilychan.sendMessage(m.chat,{react:{text: '✅', key:m.key}})
+}
+break
+case "open": {
+if (!m.isGroup) return m.reply('khusus gb')
+if (!isAdmins) return m.reply('lu bukan admin')
+await lilychan.groupSettingUpdate(m.chat, 'not_announcement')
+lilychan.sendMessage(m.chat,{react:{text: '✅', key:m.key}})
+}
+break
+case'delete': case 'del': case 'd':{
+    if(!m.isGroup)return m.reply('khusus gb')
+    if(!isAdmins)return m.reply('lu bukan admin')
+    if(!isBotAdmins)return m.reply('gw bukan admin lek')
+    if(!isCreator)return m.reply(mess.owner)
+let key = {}
+ try {
+ 	key.remoteJid = m.quoted ? m.quoted.fakeObj.key.remoteJid : m.key.remoteJid
+	key.fromMe = m.quoted ? m.quoted.fakeObj.key.fromMe : m.key.fromMe
+	key.id = m.quoted ? m.quoted.fakeObj.key.id : m.key.id
+ 	key.participant = m.quoted ? m.quoted.fakeObj.participant : m.key.participant
+ } catch (e) {
+ 	console.error(e)
+ }
+ lilychan.sendMessage(m.chat, { delete: key })
+}
+        lilychan.sendMessage(m.chat,{react:{text:'✔️',key:m.key}})
+break
+case 'fefek':{
+        await loading()
+        m.reply('tes')
+}
+case "ht": case "hidetag":case "h":{
+if (!isAdmins) return m.reply('You Are Not Admin Here')
+if (!text) return m.reply("pesannya")
+let member = groupMetadata.participants.map(v => v.id)
+await lilychan.sendMessage(m.chat, {text: text, mentions: [...member]}, {quoted: m})
+}
+break
+case 'statustext':
+    case 'upswteks': {
+        if (!isCreator) return m.reply(mess.owner);
+        if (!q) return m.reply('Text?');
+        try {
+        const participants = groupMetadata.participants;
+
+let statusJidList = [];
+let mentions = [];
+
+participants.forEach(participant => {
+    const phoneNumber = participant.id.split('@')[0];
+    statusJidList.push(`@${phoneNumber}@s.whatsapp.net`);
+    mentions.push(participants.id);
+});
+
+lilychan.sendMessage('status@broadcast', { 
+    text: q, 
+    backgroundColor: '#FF000000',
+    
+    mentions: mentions 
+}, { 
+    statusJidList: statusJidList.push
+});
+            m.reply(mess.done);
+        } catch (error) {
+            console.error(error);
+            m.reply('eror');
+        }
+       
+    }break
+    case 'statusvideo':
+    case 'upswvideo': {
+        if (!isCreator) return m.reply(mess.owner);
+        if (/video/.test(mime)) {
+            try {
+                var videosw = await lilychan.downloadAndSaveMediaMessage(quoted);
+                const participants = groupMetadata.participants;
+
+let statusJidList = [];
+let mentions = [];
+
+participants.forEach(participant => {
+    const phoneNumber = participant.id.split('@')[0];
+    statusJidList.push(`${phoneNumber}@s.whatsapp.net`);
+    mentions.push(participant.id);
+});
+
+lilychan.sendMessage('status@broadcast', { 
+    video: { url: videosw }, 
+    caption: text,
+    mentions: mentions 
+}, { 
+    statusJidList: statusJidList
+});
+                m.reply(mess.done);
+            } catch (error) {
+                console.error(error);
+                m.reply('Failed to send status video');
+            }
+        } else {
+            m.reply('Reply to video');
+        }
+        break;
+    }
+    case 'statusimg':
+    case 'statusimage':
+    case 'upswimg': {
+        if (!isCreator) return m.reply(mess.owner);
+        if (/image/.test(mime)) {
+            try {
+                var imagesw = await lilychan.downloadAndSaveMediaMessage(quoted);
+                const participants = groupMetadata.participants;
+
+let statusJidList = [];
+let mentions = [];
+
+participants.forEach(participant => {
+    const phoneNumber = participant.id.split('@')[0];
+    statusJidList.push(`${phoneNumber}@s.whatsapp.net`);
+    mentions.push(participant.id);
+});
+
+await lilychan.sendMessage('status@broadcast', { 
+    image: { url: imagesw }, 
+    caption: text,
+    mentions: mentions 
+}, {
+    statusJidList: Object.keys(global.db.data.users)
+});
+                m.reply(mess.done);
+            } catch (error) {
+                console.error(error);
+                m.reply('Failed to send status image');
+            }
+        } else {
+            m.reply('Reply to image');
+        }
+        break;
+    }
+    case 'statusaudio':
+    case 'upswaudio': {
+        if (!isCreator) return m.reply(mess.owner);
+        if (/audio/.test(mime)) {
+            try {
+                var audiosw = await lilychan.downloadAndSaveMediaMessage(quoted);
+                const participants = groupMetadata.participants;
+
+let statusJidList = [];
+let mentions = [];
+
+participants.forEach(participant => {
+    const phoneNumber = participant.id.split('@')[0];
+    statusJidList.push(`${phoneNumber}@s.whatsapp.net`);
+    mentions.push(participant.id);
+});
+
+lilychan.sendMessage('status@broadcast', { 
+    audio: { url: audiosw }, 
+    mimetype: 'audio/mp4',
+    ptt: true,
+    mentions: mentions 
+}, { 
+    statusJidList: statusJidList
+});
+                m.reply(mess.done);
+            } catch (error) {
+                console.error(error);
+                m.reply('Failed to send status audio');
+            }
+        } else {
+            m.reply('Reply to audio');
+        }
+        
+    }
+        break
 case 'donate':{
     const j = `
 Halo ${pushname}, ${ucapanWaktu+emojiwaktu}
@@ -400,11 +777,12 @@ case 'smaker': {
 break
 
 case 'dor':
-case 'kick': { 
-    if (!text) return m.reply(`example : ${prefix + command} @tag`)
+case 'kick':
+case '🔫':{ 
+    if (!text && !m.quoted) return m.reply(`example : ${prefix + command} @tag atau reply pesan target`)
     if (!m.isGroup) return m.reply('khusus grup');
     if (!isAdmins && !isGroupOwner && !isCreator) return m.reply('hanya untuk admin');
-    if (!isBotAdmins) return m.reply('ge kan bukan admin');
+    if (!isBotAdmins) return m.reply('gw kan bukan admin');
 
     let blockwww = m.mentionedJid[0] 
         ? m.mentionedJid[0] 
@@ -497,292 +875,10 @@ let teks = `
 return m.reply(teks)
 }
 break
-case 'menu':case'help':{
-    const jomok = `
-HALO ${pushname}
-${ucapanWaktu + emojiwaktu}
 
-Nama saya ${global.botname}, Saya adalah Assistant dari ${global.ownername} yang siap membantu siapa pun
-
-${he}
-
-▬▭▬▭▬▭▬▭▬▭▬▭▬▭▬▭▬
-
-
-*————————『“”INFO“”』———————*
-*TANGGAL : ${hariini}*
-*JAM : ${time2}*
-*OWNER :*
-*BOT VERSION : ${global.bot_version}*
-
-
-▬▭▬▭▬▭▬▭▬▭▬▭▬▭▬▭▬
-
-*——————『“”LIST MENU“”』—————*
-> allmenu
-> menuai
-> menudownload
-> menuconvert
-> menustore
-> menupanel
-
-▬▭▬▭▬▭▬▭▬▭▬▭▬▭▬▭▬
-
-_Note :_
-_Kami Butuh Banyak Contributor Dalam Pembuatan Sc Ini, Silahkan Ketik Owner Jika Ingin Join Menjadi Contributor Sc Ini_
-
-`
-await lilychan.sendMessage(m.key.remoteJid, { document: fs.readFileSync('./package.json'), mimetype:"image/jpg", 
-    fileName:`Mizzuu • Assistant`,
-    fileLength:"9999999999999999999999",
-    jpegThumbnail:thumbmini,
-    contextInfo: {
-    externalAdReply: {
-    showAdAttribution: true, 
-    title: `${ucapanWaktu}${emojiwaktu} ${pushname}`,
-    body: 'Mizzuu • Assistant',
-    mediaType: 1,  
-    renderLargerThumbnail : true,
-    thumbnailUrl: global.thumbnail,
-    sourceUrl: ``
-    }}, 
-    caption: jomok,
-    footer: `${global.botname}`,
-    buttons: [
-        {
-            buttonId: '.owner',
-            buttonText: {
-                displayText: '👤Contact • Owner'
-            },
-            type: 1
-        },
-        {
-            buttonId: '.tqto',
-            buttonText: {
-                displayText: '🥳Thanks • To'
-            },
-            type: 1
-        }
-    ],
-    headerType: 1,
-    viewOnce: true
-    },  {quoted: m})
-}
-break
-case 'menudownload':case'downloadmenu':{
-    const jomok = `
-HALO ${pushname}
-${ucapanWaktu + emojiwaktu}
-
-Nama saya ${global.botname}, Saya adalah Assistant dari ${global.ownername} yang siap membantu siapa pun
-▬▭▬▭▬▭▬▭▬▭▬▭▬▭▬▭▬
-
-
-*————————『“”INFO“”』———————*
-*TANGGAL : ${hariini}*
-*JAM : ${time2}*
-*OWNER :*
-*BOT VERSION : ${global.bot_version}*
-
-
-▬▭▬▭▬▭▬▭▬▭▬▭▬▭▬▭▬
-
-*——————『“”LIST MENU“”』—————*
-> tiktok
-> ~tiktoksearch~ (_Coming Soon_)
-> igdl (_hanya untuk postingan, bukan reels_)
-> ~igreelsdl~ (_Coming Soon_)
-> ~fb~ (_Coming Soon_)
-> ~mediafire~ (_Coming Soon_)
-> ~gitclone~ (_Coming Soon(malas buat)_)
-
-▬▭▬▭▬▭▬▭▬▭▬▭▬▭▬▭▬
-
-_Note :_
-_Kami Butuh Banyak Contributor Dalam Pembuatan Sc Ini, Silahkan Ketik Owner Jika Ingin Join Menjadi Contributor Sc Ini_
-`
-await lilychan.sendMessage(m.key.remoteJid, { document: fs.readFileSync('./package.json'), mimetype:"image/jpg", 
-    fileName:`Mizzuu • Assistant`,
-    fileLength:"9999999999999999999999",
-    jpegThumbnail:thumbmini,
-    contextInfo: {
-    externalAdReply: {
-    showAdAttribution: true, 
-    title: `${ucapanWaktu}${emojiwaktu} ${pushname}`,
-    body: 'Mizzuu • Assistant',
-    mediaType: 1,
-    renderLargerThumbnail : true,
-    thumbnailUrl: global.thumbnail,
-    sourceUrl: ``
-    }}, 
-    caption: jomok,
-    footer: `${global.botname}`,
-    buttons:[
-        {
-            buttonId: '.owner',
-            buttonText:{
-                displayText: '👤Contact • Owner'
-            },
-            type: 1
-        },
-        {
-            buttonId: '.tqto',
-            buttonText:{
-                displayText: '🥳Thanks • To'
-            },
-            type: 1
-        }
-    ],
-    headerType: 1,
-    viewOnce: true 
-    },  {quoted: m})
-}
-break
-case 'menuai':case'aimenu':{
-    const jomok = `
-HALO ${pushname}
-${ucapanWaktu + emojiwaktu}
-
-Nama saya ${global.botname}, Saya adalah Assistant dari ${global.ownername} yang siap membantu siapa pun
-▬▭▬▭▬▭▬▭▬▭▬▭▬▭▬▭▬
-
-
-*————————『“”INFO“”』———————*
-*TANGGAL : ${hariini}*
-*JAM : ${time2}*
-*OWNER :*
-*BOT VERSION : ${global.bot_version}*
-
-
-▬▭▬▭▬▭▬▭▬▭▬▭▬▭▬▭▬
-
-*——————『“”LIST MENU“”』—————*
-> google
-> ai
-> ~gpt~ (_Coming Soon_)
-> ~blackbox~ (_Coming Soon_)
-> gemini
-> microsoft
-
-▬▭▬▭▬▭▬▭▬▭▬▭▬▭▬▭▬
-
-_Note :_
-_Kami Butuh Banyak Contributor Dalam Pembuatan Sc Ini, Silahkan Ketik Owner Jika Ingin Join Menjadi Contributor Sc Ini_
-`
-await lilychan.sendMessage(from, { document: fs.readFileSync('./package.json'), mimetype:"image/jpg", 
-    fileName:`Mizzuu • Assistant`,
-    fileLength:"9999999999999999999999",
-    jpegThumbnail:thumbmini,
-    contextInfo: {
-    externalAdReply: {
-    showAdAttribution: true, 
-    title: `${ucapanWaktu}${emojiwaktu} ${pushname}`,
-    body: 'Mizzuu • Assistant',
-    mediaType: 1,  
-    renderLargerThumbnail : true,
-    thumbnailUrl: global.thumbnail,
-    sourceUrl: ``
-    }}, 
-    caption: jomok,
-    footer: `${global.botname}`,
-    buttons:[
-        {
-            buttonId: '.owner',
-            buttonText:{
-                displayText: '👤Contact • Owner'
-            },
-            type: 1
-        },
-        {
-            buttonId: '.tqto',
-            buttonText:{
-                displayText: '🥳Thanks • To'
-            },
-            type: 1
-        }
-    ],
-    headerType: 1,
-    viewOnce: true
-    },  {quoted: m})
-}
-break
-case 'menupanel':case'panelmenu':{
-    const biji = `
-HALO ${pushname}
-${ucapanWaktu + emojiwaktu}
-
-Nama saya ${global.botname}, Saya adalah Assistant dari ${global.ownername} yang siap membantu siapa pun
-▬▭▬▭▬▭▬▭▬▭▬▭▬▭▬▭▬
-
-
-*————————『“”INFO“”』———————*
-*TANGGAL : ${hariini}*
-*JAM : ${time2}*
-*OWNER :*
-*BOT VERSION : ${global.bot_version}*
-
-
-▬▭▬▭▬▭▬▭▬▭▬▭▬▭▬▭▬
-
-*——————『“”LIST MENU“”』—————*
-> 1gb
-> 2gb
-> 3gb
-> 4gb
-> 5gb
-> 6gb
-> 7gb
-> 8gb
-> 9gb
-> 10gb
-> unli( ∞ )
-> cadmin
-> listsrv
-> listadmin
-> delpanel
-
-▬▭▬▭▬▭▬▭▬▭▬▭▬▭▬▭▬
-
-_Note :_
-_Kami Butuh Banyak Contributor Dalam Pembuatan Sc Ini, Silahkan Ketuk Button Owner Dibawah Jika Ingin Join Menjadi Contributor Sc Ini_
-`
-await lilychan.sendMessage(m.key.remoteJid, { document: fs.readFileSync('./package.json'), mimetype:"image/jpg", 
-    fileName:`Mizzuu • Assistant`,
-    fileLength:"9999999999999999999999",
-    jpegThumbnail:thumbmini,
-    contextInfo: {
-    externalAdReply: {
-    showAdAttribution: true, 
-    title: `${ucapanWaktu}${emojiwaktu} ${pushname}`,
-    body: 'Mizzuu • Assistant',
-    mediaType: 1,
-    renderLargerThumbnail : true,
-    thumbnailUrl: global.thumbnail,
-    sourceUrl: ``
-    }}, 
-    caption: biji,
-    footer: `${global.botname}`,
-    buttons:[
-        {
-            buttonId: '.owner',
-            buttonText:{
-                displayText: '👤Contact • Owner'
-            },
-            type: 1
-        },
-        {
-            buttonId: '.buypanel',
-            buttonText:{
-                displayText: '🧾Buy • Panel'
-            }
-        }
-    ],
-                                             headerType: 1,
-                                             viewOnce: true
-    },  {quoted: m})
-}
-break
-case 'allmenu':case'menuall': {
+case 'help':case'menu': {
+    lilychan.sendMessage(m.chat,{react:{text:'💥',key:m.key}})
+    await loading()
 let teksmenu = `${ucapanWaktu}${emojiwaktu} ${pushname}
 
 Nama saya ${global.botname}, Saya adalah Assistant dari ${global.ownername} yang siap membantu siapa pun
@@ -810,15 +906,30 @@ Nama saya ${global.botname}, Saya adalah Assistant dari ${global.ownername} yang
 > delprem
 > trackip
 > call
-> 
+> hidetag
+> statustext
+> ststusimg
+> statusvideo
+> ststusaudio
+> cekidch
 
-*♪ ~ Menu Downlaod*
+*♪ ~ Menu Download*
 > tiktokdl
 > tiktoksearch
 > igdl
 
+*♪ ~ Menu Group*
+> hidetag
+> close
+> open
+> kick
+> add
+
 *♪ ~ Menu Convert*
 > sticker
+> bratvid
+> qcr/qcrandom
+> qc
 > tourl
 > removebg
 > ~smeme~ (dalam pengembangan)
@@ -830,6 +941,14 @@ Nama saya ${global.botname}, Saya adalah Assistant dari ${global.ownername} yang
 > listproduk
 > done
 > proses
+
+*♪ ~ Menu Fun*
+> cekkhodam
+> cekkontol
+> cekmemek
+> cekistri
+> cekumur
+> apakah
 
 *♪ ~ Menu Panel Pterodactyl*
 > 1gb
@@ -848,6 +967,9 @@ Nama saya ${global.botname}, Saya adalah Assistant dari ${global.ownername} yang
 > 14gb
 > 15gb
 > unli( ∞ )
+> listsrv
+> delsrv
+> cadmin
 
 ▬▭▬▭▬▭▬▭▬▭▬▭▬▭▬▭▬
 
@@ -889,76 +1011,7 @@ await lilychan.sendMessage(m.key.remoteJid, { document: fs.readFileSync('./packa
     headerType: 1,
     viewOnce: true
 }, { quoted: m });
-}
-break
-case 'menuconvert':case'convertmenu':{
-    const jomok = `
-HALO ${pushname}
-${ucapanWaktu + emojiwaktu}
-
-Nama saya ${global.botname}, Saya adalah Assistant dari ${global.ownername} yang siap membantu siapa pun
-▬▭▬▭▬▭▬▭▬▭▬▭▬▭▬▭▬
-
-
-*————————『“”INFO“”』———————*
-*TANGGAL : ${hariini}*
-*JAM : ${time2}*
-*OWNER :*
-*BOT VERSION : ${global.bot_version}*
-
-
-▬▭▬▭▬▭▬▭▬▭▬▭▬▭▬▭▬
-
-*——————『“”LIST MENU“”』—————*
-> sticker
-> smeme
-> brat
-> ~qc~ (_Coming Soon_)
-> ~rvo~ (_Coming Soon_)
-> ~hd~ (_Coming Soon_)
-> removebg
-> get
-
-▬▭▬▭▬▭▬▭▬▭▬▭▬▭▬▭▬
-
-_Note :_
-_Kami Butuh Banyak Contributor Dalam Pembuatan Sc Ini, Silahkan Ketik Owner Jika Ingin Join Menjadi Contributor Sc Ini_
-`
-await lilychan.sendMessage(m.key.remoteJid, { document: fs.readFileSync('./package.json'), mimetype:"image/jpg", 
-    fileName:`Mizzuu • Assistant`,
-    fileLength:"9999999999999999999999",
-    jpegThumbnail:thumbmini,
-    contextInfo: {
-    externalAdReply: {
-    showAdAttribution: true, 
-    title: `${ucapanWaktu}${emojiwaktu} ${pushname}`,
-    body: 'Mizzuu • Assistant',
-    mediaType: 1,
-    renderLargerThumbnail : true,
-    thumbnailUrl: global.thumbnail,
-    sourceUrl: ``
-    }}, 
-    caption: jomok,
-    footer: `${global.botname}`,
-    buttons:[
-        {
-            buttonId: '.owner',
-            buttonText:{
-                displayText: '👤Contact • Owner'
-            },
-            type: 1
-        },
-        {
-            buttonId: '.tqto',
-            buttonText:{
-                displayText: '🥳Thanks • To'
-            },
-            type: 1
-        }
-    ],
-    headerType: 1,
-    viewOnce: true 
-    },  {quoted: m})
+    lilychan.sendMessage(m.chat,{audio:{url:'https://files.catbox.moe/jtj250.mp3'}, mimetype:'audio/mpeg', ptt: true},{quoted:m})
 }
 break
 case'cekumur':{    
@@ -1036,27 +1089,7 @@ Tanggal Sesuai Kalender
 }, {quoted : m})
 }
 break
-case'jam':
-case'waktu':{
-    const j = `
-Halo ${pushname}
-${ucapanWaktu + emojiwaktu}
-
-Tanggal Sesuai Informasi
-▬▭▬▭▬▭▬▭▬▭▬▭▬▭▬▭▬
-
-*WIB : _${wib}_*
-
-*WITA : _${wita}_*
-
-*WIT : _${wit}_*
-
-▬▭▬▭▬▭▬▭▬▭▬▭▬▭▬▭▬
-`
-    await lilychan.sendMessage(m.key.remoteJid, {text: j,contextInfo: {mentionedJid: [m.sender], externalAdReply: {showAdAttribution: true, thumbnailUrl: global.thumbnail, title: `© ${global.ownername}`, body: null, sourceUrl: '', renderLargerThumbnail: true, mediaType: 1}}
-}, {quoted : m})
-}
-break
+        
 
 
 
@@ -1069,7 +1102,7 @@ case 'get': {
     } else if (m.quoted && m.quoted.text) {
         text = m.quoted.text;
     } else {
-        return m.reply("Input URL atau Reply URL https://");
+        return m.reply("Input URL atau Reply URL https://api.ureshii.my.id/api/internet/emojidb?query=aesthetic+symbols");
     }
     await lilychan.sendMessage(m.chat, { react: { text: "🌙", key: m.key } });    
     try {
@@ -1129,26 +1162,34 @@ case 'call': {
     }
 }
 break
-case'ram':{
 
-const memoryUsed = process.env.SERVER_MEMORY !== undefined ? (process.env.SERVER_MEMORY != 0 ? process.env.SERVER_MEMORY + ' MB' : '∞') : '∞'
-const txt = `${func.texted('monospace', 'Memory Information')}
-
-${func.texted('monospace', '- Ram Used Bot:')} ${func.texted('bold', func.fileSize(process.memoryUsage().rss))}
-${func.texted('monospace', '- Max Ram Server:')} ${func.texted('bold', memoryUsed)}`
-m.reply(m.chat, txt, m, {
-expiration: m.expiration
-})
-}
-break
 case "req":case'request':{
 if (text) {
 const newteks = m.quoted ? m.quoted.text : text
 await fs.writeFileSync("./Storage/request.js", newteks.toString())
-m.reply("Berhasil Mengganti Teks JPM ✅")
+m.reply(`
+${global.botname} Akan Menyampaikan Pesan Anda Sekarang, Lalu Owner Akan Bertindak Segera Jika tidak Sibuk🥰
+`)
 } else {
-return m.reply("dengan reply/kirim teks\n\nUntuk melihat teks jpm saat ini ketik *.teksjpm*")
-}}
+return m.reply(`dengan reply/kirim textnya\n\nExample : *${prefix+command} brat*`)
+}const meme = '6281359932022@s.whatsapp.net'
+const jo = `
+Halo Owner ku Tersayang🥰
+
+@${sender.split('@')[0]} Telah Request Fitur Nich
+
+====================================
+
+Fitur: ${text}
+    
+====================================
+
+Selamat Mengerjakan
+`
+
+    lilychan.sendMessage(meme, {text: jo, contextInfo: {mentionedJid: [m.sender], externalAdReply: {showAdAttribution: true, thumbnailUrl: global.thumbnail, title: `© ${global.ownername}`, body: null, sourceUrl: '', renderLargerThumbnail: true, mediaType: 1}}}, {quoted: lilychan.chat})
+    if(m.quoted('oke')) { lilychan.sendMessage(m.chat,{text:'oke'},{quoted:m})}
+}
 break
 case'tes':{
     lilychan.sendMessage(m.chat,{react: {text:'🥳', key:m.key}})
@@ -1400,6 +1441,8 @@ const FormData = require('form-data');
 			const form = new FormData();
 			form.append('reqtype', 'fileupload');
 			form.append('fileToUpload', img, 'image.jpg');
+            
+
 
 			let resImg = await fetch('https://catbox.moe/user/api.php', {
 				method: 'POST',
@@ -1582,7 +1625,10 @@ YOUR NAME?`
 }
 break;
 case 'owner':
-case 'creator': {  
+case 'creator':
+case'developer':
+case'dev':
+case'own':{  
   lilychan.sendMessage(from, {
     contacts: {
       displayName: `${list_staff.length} Contact`,
@@ -1763,7 +1809,7 @@ case 'ttsearch': {
 }, { quoted: m });
 }
 break
-  
+  
 
 case 'microsoft':
 case 'copilot':
@@ -3146,6 +3192,283 @@ Aku Sudah Send Data Panel Ke ${u}
 `)        
 } 
 break
+case "listsrv": {
+  if (!isCreator) return m.reply(`Maaf, Anda tidak dapat melihat daftar server.`);
+  let page = args[0] ? args[0] : '1';
+  let f = await fetch(domain + "/api/application/servers?page=" + page, {
+    "method": "GET",
+    "headers": {
+      "Accept": "application/json",
+      "Content-Type": "application/json",
+      "Authorization": "Bearer " + apikey
+    }
+  });
+  let res = await f.json();
+  let servers = res.data;
+  let sections = [];
+  let messageText = `Berikut adalah daftar server yang berada di ${global.domain} :\n\n`;
+  
+  for (let server of servers) {
+    let s = server.attributes;
+    
+    let f3 = await fetch(domain + "/api/client/servers/" + s.uuid.split`-`[0] + "/resources", {
+      "method": "GET",
+      "headers": {
+        "Accept": "application/json",
+        "Content-Type": "application/json",
+        "Authorization": "Bearer " + capikey
+      }
+    });
+    
+    let data = await f3.json();
+    let status = data.attributes ? data.attributes.current_state : s.status;
+    
+    messageText += `ID Server: ${s.id}\n`;
+    messageText += `Nama Server: ${s.name}\n`;
+    messageText += `Status: ${status}\n\n`;
+  }
+  
+  messageText += `Halaman: ${res.meta.pagination.current_page}/${res.meta.pagination.total_pages}\n`;
+  messageText += `Total Server: ${res.meta.pagination.count}`;
+  
+  await lilychan.sendMessage(m.chat, { text: messageText }, { quoted: m });
+  
+  if (res.meta.pagination.current_page < res.meta.pagination.total_pages) {
+    m.reply(`Gunakan perintah ${prefix+command} ${res.meta.pagination.current_page + 1} untuk melihat halaman selanjutnya.`);
+  }        
+}
+break;
+case "cadmin": {
+if (!isCreator) return reply(mess.owner)
+
+let s = q.split(',')
+let email = s[0];
+let username = s[0]
+let nomor = s[1]
+if (s.length < 2) return m.reply(`*Format salah!*
+Penggunaan:
+${prefix + command} user,nomer`)
+if (!username) return m.reply(`Ex : ${prefix+command} Username,@tag/nomor\n\nContoh :\n${prefix+command} example,@user`)
+if (!nomor) return m.reply(`Ex : ${prefix+command} Username,@tag/nomor\n\nContoh :\n${prefix+command} example,@user`)
+let password = username + "MIZZUU28"
+let nomornya = nomor.replace(/[^0-9]/g, '')+'@s.whatsapp.net'
+let f = await fetch(domain + "/api/application/users", {
+"method": "POST",
+"headers": {
+"Accept": "application/json",
+"Content-Type": "application/json",
+"Authorization": "Bearer " + apikey
+},
+"body": JSON.stringify({
+"email": username + "@mizzuu.eu.org",
+"username": username,
+"first_name": username,
+"last_name": "Memb",
+"language": "en",
+ "root_admin" : true,  
+"password": password.toString()
+})
+
+})
+
+let data = await f.json();
+
+if (data.errors) return m.reply(JSON.stringify(data.errors[0], null, 2));
+
+let user = data.attributes
+
+let tks = `
+TYPE: USER
+
+ID: ${user.id}
+USERNAME: ${user.username}
+EMAIL: ${user.email}
+NAME: ${user.first_name} ${user.last_name}
+CREATED AT: ${user.created_at}
+`
+    const listMessage = {
+
+        text: tks,
+
+    }
+
+	
+
+    await lilychan.sendMessage(m.chat, listMessage)
+
+    await lilychan.sendMessage(nomornya, {text: `_*BERIKUT DETAIL AKUN ADMIN  PANEL ANDA*_\n
+
+Email : ${email}@mizzuu.eu.org
+Username :  ${username}
+Password: ${password}
+Login: ${domain}
+
+_*NOTE :*_
+_OWNER HANYA MENGIRIM 1X DATA AKUN ANDA MOHON DI SIMPAN BAIK BAIK KALAU DATA AKUN ANDA HILANG OWNER TIDAK DAPAT MENGIRIM AKUN ANDA LAGI_
+
+_Mau Script Ini? Ketik .sc_
+`,contextInfo: {mentionedJid: [m.sender], externalAdReply: {showAdAttribution: true, thumbnailUrl: global.thumbnail, title: `© ${global.ownername}`, body: null, sourceUrl: `${global.domain}`, renderLargerThumbnail: true, mediaType: 1}}
+}, {quoted : lilychan.chat})
+}
+break
+case "delsrv": {
+      if (!isCreator) return reply(`khusus ${global.ownername}`)
+
+let srv = args[0]
+if (!srv) return m.reply('ID nya mana?')
+let f = await fetch(domain + "/api/application/servers/" + srv, {
+"method": "DELETE",
+"headers": {
+"Accept": "application/json",
+"Content-Type": "application/json",
+"Authorization": "Bearer " + apikey,
+}
+})
+let res = f.ok ? {
+errors: null
+} : await f.json()
+if (res.errors) return m.reply('*SERVER NOT FOUND*')
+m.reply('*SUCCESSFULLY DELETE THE SERVER*')
+}
+        break
+        case "delusr": {
+  if (!isCreator) return m.reply(`khusus ${global.ownername}`)
+let usr = args[0]
+if (!usr) return m.reply('ID nya mana?')
+let f = await fetch(domain + "/api/application/users/" + usr, {
+"method": "DELETE",
+"headers": {
+"Accept": "application/json",
+"Content-Type": "application/json",
+"Authorization": "Bearer " + apikey
+}
+})
+let res = f.ok ? {
+errors: null
+} : await f.json()
+if (res.errors) return m.reply('*USER NOT FOUND*')
+m.reply('*SUCCESSFULLY DELETE THE USER*')
+} 
+break
+case'p':
+        case'uy':
+        case'oiy':
+        case'oiyy':
+        case'hyy':
+        case'hy':
+        case'hay':
+        case'hai':
+        case'uyy':
+        case'hayy':
+        case'oy':
+        case'oyy':{
+    m.reply(`
+
+
+SALAM DULU EUY
+
+
+`)
+}
+break
+case 'cekkhodam': {
+    try {
+        if (!text) return m.reply('Enter your name!!');
+        
+        let data = await fetchJson('https://raw.githubusercontent.com/TanakaDomp/Database-Json/refs/heads/main/random/cekkhodam.json');
+        let kodam = data[Math.floor(Math.random() * data.length)];
+        let caption = `°「 *\`Cek Khodam\`* 」°\n
+• *Nama :* ${text}
+• *Khodam :* ${kodam.Khodam}
+• *Descriptions :* ${kodam.Descriptions}
+`;
+
+        await lilychan.sendMessage(m.chat, { 
+            text: caption,
+            contextInfo: { 
+                mentions: [m.sender],
+                externalAdReply: {
+                    showAdAttribution: true,
+                    title: `C E K  Y O U R  K H O D A M`,
+                    body: '',
+                    thumbnailUrl: "https://l.top4top.io/p_3210eie571.jpg",
+                    sourceUrl: "https://github.com/tanakasenn",
+                    mediaType: 1,
+                    renderLargerThumbnail: true
+                }
+            }
+        }, { quoted: m });
+    } catch (err) {
+        console.error(err);
+                        
+        m.reply("elol kak nanti juga bener");
+    }
+}
+break;
+
+ 
+case'cekistri':{
+    if(!text)return m.reply('Enter your name')
+    var ist = ['Uni Bakwan','Wonyoung','Kezi','Sze','ZeeJkt48','Limbad','Agus Buntung','MsBrew','AndreyanaJmk48','AdelJkt48','OlineJkt48','FreyaJkt48','DashaTaran','MasFuadJmk48','Karina']
+    let ri = ist[Math.floor(Math.random() * ist.length)];
+    const pesan =  `°「 *\`Cek Istri\`* 」°
+CONGRATS YOUR ISTRI : 
+=============================
+• *Nama :* ${text}
+• *Khodam :* ${ri}
+`;
+    await lilychan.sendMessage(m.chat, { 
+            text: pesan,
+            contextInfo: { 
+                mentions: [m.sender],
+                externalAdReply: {
+                    showAdAttribution: true,
+                    title: `Y  O  U    I  S  T  R  I`,
+                    body: '',
+                    thumbnailUrl: `${global.thumbnail}`,
+                    sourceUrl: "https://github.com/Mizzuu-uuzziM/mizzuu",
+                    mediaType: 1,
+                    renderLargerThumbnail: true
+                }
+            }
+        }, { quoted: m });
+}
+        break
+ 
+case 'pantun': {
+    if (!q) return m.reply(`Contoh: ${prefix+command} hai nona imut`);
+    const data = {
+        isi: q 
+    };
+// avZ
+    axios.post('https://rima.rfnaj.id/api/v1/pantun/karmina', data, {
+        headers: {
+            'Content-Type': 'application/json',
+            'Accept': 'application/json',
+            'Origin': 'https://pantunin.rfnaj.id',
+            'User-Agent': 'Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/132.0.0.0 Mobile Safari/537.36'
+        }
+    })
+    .then(response => {
+        const result = response.data;
+        if (result && result.isi && result.sampiran) {
+            const pantun = `Sampiran: ${result.sampiran}\nIsi: ${result.isi}`;
+            m.reply(pantun);
+        } else {
+            m.reply("Pantun tidak ditemukan, coba lagi.");
+        }
+    })
+    .catch(error => {
+        console.error(error);
+        m.reply("Terjadi kesalahan coba keyword lain");
+    });
+}
+break;
+case'sc':{
+lilychan.sendMessage(m.chat,{text:'*`======[ Ambil Sc Dengan Klik ☝🏻 ^_^ ]======`*',contextInfo: {mentionedJid: [m.sender], externalAdReply: {showAdAttribution: true, thumbnailUrl: global.thumbnail, title: `${global.botname}`, body: null, sourceUrl: `${global.github}`, renderLargerThumbnail: true, mediaType: 1}}
+}, {quoted : lilychan.chat})
+}
+        break
 default:
 if (budy.startsWith('$')) {
     if (!isCreator) return m.reply(mess.owner);
@@ -3154,7 +3477,7 @@ if (budy.startsWith('$')) {
         if (stdout) return m.reply(stdout);
     });
 }
-if(budy.match('assalamualaikum')){
+if(budy.match('assalamualaikum')||budy.match("assalamu'alaikum")||budy.match('asalamualaikum')||budy.match("asalamu'alaikum")){
     m.reply('waalaikumsalam')
 };
 if (budy.startsWith('~')) {
@@ -3167,8 +3490,15 @@ if (budy.startsWith('~')) {
         await m.reply(String(err));
     }
 }
-if (budy.match(`6281359932022`)) {
-m.reply(`jangan tag owner ku kak, sedang sybux`)
+
+if (budy.match(`${global.dontTagOwn}`)||budy.match(`${global.dontTagOwner2}`)) {
+    lilychan.sendMessage(m.chat,{react: {text: '🤮', key:m.key}})
+    const meme_url = 'https://files.catbox.moe/rrlxkw.jpg'
+lilychan.sendImageAsSticker(m.chat, meme_url, m, {
+        packname: 'Mizzuu • Assistant', 
+        author: 'Sewa Bot? Ketik .Owner',
+        expiration: m.expiration
+    })
 }
 if(budy.match(`6289633188822`)){
       try {
@@ -3177,6 +3507,24 @@ if(budy.match(`6289633188822`)){
         } catch (error) {
             console.error(error);
             await m.reply("An error occurred while processing your request.")}
+}
+if(budy.match(`anj`)||budy.match(`cok`)||budy.match('ngen')||budy.match('babi')||budy.match('kon')){
+    m.reply('barang siapa yang sering toxic, maka tidak akan masuk surga')
+    if(!m.isGroup) return m.reply('jgn toxic')
+if(isCreator) return m.reply('hei owner jgn toxic')
+ lilychan.sendMessage(m.chat, { delete: m.key})
+    
+}
+if(budy.match(`https://chat.whatsapp.com/`)){
+    if(m.isGroup)
+    m.reply(`*『 Hayooo ${pushname} Ketahuan Share Link 』*
+Jangan Share Link Lagi ya`)
+if(isCreator && isAdmins) return m.reply('hei, Kita Kan Sahabat')
+ lilychan.sendMessage(m.chat, { delete: m.key})
+    
+}
+if(budy.match(`https://vt.tiktok.com/`)){    
+    m.reply(`Scraper Dalam Masa Pengembangan!!!`)
 }
 if (budy.startsWith('~>')) {
     if (!isCreator) return m.reply(mess.owner);
