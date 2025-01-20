@@ -3500,7 +3500,7 @@ lilychan.sendImageAsSticker(m.chat, meme_url, m, {
         expiration: m.expiration
     })
 }
-if(budy.match(`6289633188822`)){
+if(budy.match(`${global.pairing}`)){
       try {
         let aii = await fetchJson(`https://www.tanakadomp.biz.id/api/openai/open-ai?q=${q}`);
         await lilychan.sendMessage(m.chat, { text: aii.message },{ quoted : m });                
