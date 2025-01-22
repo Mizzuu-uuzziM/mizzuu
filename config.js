@@ -13,7 +13,7 @@ const hariini = moment.tz('Asia/Jakarta').format('dddd, DD MMMM YYYY')
 const time = moment(Date.now()).tz('Asia/Jakarta').locale('id').format('HH:mm:ss z')
 
 //====== [ SETTING PAIRING & TOKEN ] ========//
-global.pairing = '6289633188822'isi dengan format 6281xxxx..., agar mendapatkan kode pairing
+global.pairing = '6289633188822'//isi dengan format 6281xxxx..., agar mendapatkan kode pairing
 //====== [ SETTING OWNER  ] ========//
 global.owner = [ '-', '-' ]//isi dengan format 6281xxxx...
 global.owner0 = '-@s.whatsapp.net'//isi dengan format 6281xxxx@s.whatsapp.net
