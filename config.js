@@ -37,9 +37,9 @@ global.thumbnail = 'https://files.catbox.moe/n60pjq.jpg'
 global.Url = 'https://whatsapp.com/channel/0029VaW25g5F1YlKczMRmd1h'
 
 //====== [ GLOBAL PANEL ] ======//
-global.domain = 'https://ditashopxrifky.panelku-vip.my.id' // isi dengan domain panel lu
-global.apikey = 'ptla_VhFEumG6cfz7SbxpXVd3tv3s2uvTrefln1ydxvwKwJ5' // Isi Apikey Plta Lu
-global.capikey = 'ptlc_0Zk9dSAJKe9GjMpsyA1Cja9VV9iq40JlhNtWBIwOEsY' // Isi Apikey Pltc Lu
+global.domain = '' // isi dengan domain panel lu
+global.apikey = '' // Isi Apikey Plta Lu
+global.capikey = '' // Isi Apikey Pltc Lu
 global.eggsnya = '15' // id eggs yang dipakai
 global.location = '1' // id location
 
