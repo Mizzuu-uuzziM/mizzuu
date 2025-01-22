@@ -12,7 +12,7 @@ const hariini = moment.tz('Asia/Jakarta').format('dddd, DD MMMM YYYY')
 const time = moment(Date.now()).tz('Asia/Jakarta').locale('id').format('HH:mm:ss z')
 
 //====== [ SETTING PAIRING & TOKEN ] ========//
-global.pairing = '6289633188822'
+global.pairing = '6289633188822'//isi ini untuk mendapatkan pairing
 //====== [ SETTING OWNER  ] ========//
 global.owner = [ '6281359932022', '6288807709243','6281399897454','6283841951316' ]
 global.dontTagOwn = '6281359932022'
