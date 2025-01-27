@@ -1,5 +1,5 @@
 **Mizzuu • Assistant | 0.0.1** | ***Base Lilychan***
-# maaf kemarin ada yg salah di config.js nya
+# TIAP GW GA SIBUK GW UPDATE FITUR
 
 
 ![Logo](https://files.catbox.moe/n60pjq.jpg)
