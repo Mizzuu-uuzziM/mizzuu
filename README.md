@@ -1,6 +1,6 @@
 **Mizzuu • Assistant | 0.0.1** | ***Base Lilychan***
 # TIAP GW GA SIBUK GW UPDATE FITUR
-
+![Logo](https://github.com/29745560/XHS_Downloader/blob/master/static%2FXHS-Downloader.png)
 
 ![Logo](https://files.catbox.moe/n60pjq.jpg)
 
