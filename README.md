@@ -1,10 +1,12 @@
 # **Mizzuu • Assistant | 0.0.1** | ***Base Lilychan***
-## TIAP GW GA SIBUK GW UPDATE FITUR
+TIAP GW GA SIBUK GW UPDATE FITUR
 
-# RESULTS OF THE NUMBER OF VISITORS TO MY REPOSITORY
+## RESULTS OF THE NUMBER OF VISITORS TO MY REPOSITORY
 
 <details>
+
 [![Visitor Count](https://profile-counter.glitch.me/Mizzuu-uuzziM/count.svg)](https://github.com/Mizzuu-uuzziM)
+
 </details>
 
 ![Logo](https://files.catbox.moe/n60pjq.jpg)
