@@ -19,7 +19,7 @@ global.prefa = ['/','!','.','#','&']
 
 ## 👨‍💻 How to install/run
 
-
+<details open>
 ```bash
 $ git clone https://github.com/TanakaDomp/Lilychanj-Script
 $ cd Lilychanj-Script
@@ -36,7 +36,7 @@ case "lily" : {
    }
 break
 ```
-
+</details>
 ![Logo](https://github.com/29745560/XHS_Downloader/blob/master/static%2FXHS-Downloader.png)
 
 ## 📢 Discussion 
