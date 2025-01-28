@@ -55,7 +55,7 @@ Jika ingin menjadi contributor atau mengetahui seputar update script ini silahka
 
 [![WhatsApp Contacts](https://img.shields.io/badge/WhatsApp%20Contacts-25D366?style=for-the-badge&logo=whatsapp&logoColor=white)](https://wa.me/6281359932022)
 
-[![Spotify](https://readme-spotify.warengonzaga.com/api/spotify)](https://open.spotify.com/user/vmt7lpqdatuelp2chw7ur2p2l)
+
 
 ## Request?
 
