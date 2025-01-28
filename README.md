@@ -1,5 +1,12 @@
 # **Mizzuu • Assistant | 0.0.1** | ***Base Lilychan***
+
+<a href='https://wa.me/6281359932022'>
+<img src="https://readme-typing-svg.herokuapp.com/?font=Righteous&size=35&center=true&vCenter=true&width=500&height=100&duration=4000&lines=Hello+Visitors;+I'm+Mizzuu+-+uuzziM;"/>
+</a>
+
+
 TIAP GW GA SIBUK GW UPDATE FITUR
+
 
 ## RESULTS OF THE NUMBER OF VISITORS TO MY REPOSITORY
 
@@ -8,6 +15,8 @@ TIAP GW GA SIBUK GW UPDATE FITUR
 [![Visitor Count](https://profile-counter.glitch.me/Mizzuu-uuzziM/count.svg)](https://github.com/Mizzuu-uuzziM)
 
 </details>
+
+
 
 ![Logo](https://files.catbox.moe/n60pjq.jpg)
 
