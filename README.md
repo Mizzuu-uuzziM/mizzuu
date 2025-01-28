@@ -8,7 +8,7 @@
 
 ## ⚙️ Settings Bot ***( config.js )***
 
-<details open>
+<details>
 ```javascript
 global.pairing = '--'
 global.owner = [ '--', '--' ]
@@ -20,7 +20,7 @@ global.prefa = ['/','!','.','#','&']
 
 ## 👨‍💻 How to install/run
 
-<details open>
+<details>
 ```bash
 $ git clone https://github.com/TanakaDomp/Lilychanj-Script
 $ cd Lilychanj-Script
@@ -31,7 +31,7 @@ $ npm start
 
 ## ♻️ Example Features
 
-<details open>
+<details>
 Berikut cara menambahkan fitur pada bot ini
 
 ```javascript
@@ -54,6 +54,8 @@ Jika ingin menjadi contributor atau mengetahui seputar update script ini silahka
 [![WhatsApp channel Mizzuu](https://img.shields.io/badge/WhatsApp%20Channel-25D366?style=for-the-badge&logo=whatsapp&logoColor=white)](https://whatsapp.com/channel/0029VakOqnmHrDZZXkFcKj0x)
 
 [![WhatsApp Contacts](https://img.shields.io/badge/WhatsApp%20Contacts-25D366?style=for-the-badge&logo=whatsapp&logoColor=white)](https://wa.me/6281359932022)
+
+[![Spotify](https://readme-spotify.warengonzaga.com/api/spotify)](https://open.spotify.com/user/vmt7lpqdatuelp2chw7ur2p2l)
 
 ## Request?
 
