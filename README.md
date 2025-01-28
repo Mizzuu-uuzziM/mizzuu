@@ -1,6 +1,8 @@
 **Mizzuu • Assistant | 0.0.1** | ***Base Lilychan***
 # TIAP GW GA SIBUK GW UPDATE FITUR
 
+![Visitor Count](https://profile-counter.glitch.me/8BitJonny/count.svg)
+
 ![Logo](https://files.catbox.moe/n60pjq.jpg)
 
 ```> Simple WhatsApp bot Using Library Baileys```
