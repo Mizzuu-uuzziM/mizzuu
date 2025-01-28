@@ -8,6 +8,7 @@
 
 ## ⚙️ Settings Bot ***( config.js )***
 
+<details open>
 ```javascript
 global.pairing = '--'
 global.owner = [ '--', '--' ]
@@ -15,7 +16,7 @@ global.botname = 'Lilychanj Bot'
 global.botnumber = '--'
 global.prefa = ['/','!','.','#','&']
 ```
-
+</details>
 
 ## 👨‍💻 How to install/run
 
@@ -26,8 +27,11 @@ $ cd Lilychanj-Script
 $ npm install
 $ npm start
 ```
+</details>
 
 ## ♻️ Example Features
+
+<details open>
 Berikut cara menambahkan fitur pada bot ini
 
 ```javascript
@@ -37,6 +41,7 @@ case "lily" : {
 break
 ```
 </details>
+
 ![Logo](https://github.com/29745560/XHS_Downloader/blob/master/static%2FXHS-Downloader.png)
 
 ## 📢 Discussion 
