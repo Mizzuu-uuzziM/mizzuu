@@ -16,6 +16,7 @@ const son = JSON.parse(fs.readFileSync('./Storage/kata-kata_pak_sujud.json', "ut
 global.testing = ''
 //====== [ SETTING PAIRING & TOKEN ] ========//
 global.pairing = ''
+global.codePairing = 'MIZZZUUU'//custom code pairing disini, maks 8 huruf
 //====== [ SETTING OWNER  ] ========//
 global.owner = [ '' ]
 global.dontTagOwn = ''
