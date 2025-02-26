@@ -6,35 +6,39 @@
 // =============================================
 
 const fs = require('fs')
+const fetchJson = require('./App/function/myfunc')
 const chalk = require('chalk')
 const moment = require('moment-timezone')
 const hariini = moment.tz('Asia/Jakarta').format('dddd, DD MMMM YYYY')	
 const time = moment(Date.now()).tz('Asia/Jakarta').locale('id').format('HH:mm:ss z')
-
+const son = JSON.parse(fs.readFileSync('./Storage/kata-kata_pak_sujud.json', "utf8"))
+    var met = son[Math.floor(Math.random() * son.length)]
+global.testing = ''
 //====== [ SETTING PAIRING & TOKEN ] ========//
-global.pairing = '6289633188822'//isi ini untuk mendapatkan pairing
+global.pairing = ''
 //====== [ SETTING OWNER  ] ========//
-global.owner = [ '6281359932022', '6288807709243','6281399897454','6283841951316' ]
-global.dontTagOwn = '6281359932022'
-global.owner0 = ['6281359932022@s.whatsapp.net','6288807709243@s.whatsapp.net','6281399897454@s.whatsapp.net','6283841951316@s.whatsapp.net']
-global.ownernumber = ['6281359932022','6288807709243','6281399897454','6283841951316']
-global.ownername = 'ㅆíㄹㄹùù'
+global.owner = [ '' ]
+global.dontTagOwn = ''
+global.owner0 = ['']
+global.ownernumber = ['']
+global.ownername = ''
 //====== [ SETTING BOT ] ========//
-global.botname = 'Mizzuu • Assistant'
-global.botnumber = '6289633188822'
+global.botname = ''
+global.botnumber = ''
 global.bot_version = 'V 0.0.1 (_CPANEL VERSION_)'
 global.prefa = ['/','!','.','#','&']
 //====== [ SETTING PACKNAME ] ========//
-global.packname = 'ׄ 𓄯ִ ── ꯭𐑈ƚꪱִ𝖼𝗄ᧉׄ𝗋 ᎓  lylꪱc𝗁α𝗇 ხᦢƚ x Mizzuu '
-global.author = `Crᧉׄdı๋𝗍 : 森晓伟 ταიακαdοოρ.ხiz.id\nAt ${hariini}\n${time}`
+global.packname = ''
+global.author = ``
 global.themeemoji = '🍁'
-global.wm = " TanakaSense.js."
-global.idch = '--@newsletter'
+global.wm = "麻辣不老实"
+global.idch = '120xxxx@newsletter'
 global.github = 'https://github.com/Mizzuu-uuzziM'
-global.titlech = '--'
+global.titlech = ''
 //====== [ THEME URL & URL ] ========//
-global.thumbnail = 'https://files.catbox.moe/n60pjq.jpg'
-global.Url = 'https://whatsapp.com/channel/0029VaW25g5F1YlKczMRmd1h'
+
+global.thumbnail = 'https://files.catbox.moe/0oz144.jpg'
+global.Url = ''
 
 //====== [ GLOBAL PANEL ] ======//
 global.domain = '' // isi dengan domain panel lu
