@@ -181,7 +181,7 @@ if (usePairingCode && !lilychan.authState.creds.registered) {
 ▀░░░▀ ▀ ▀▀▀▀ ▀▀▀▀ ▀▀▀ ▀▀▀`);
             console.log(`Is connecting Number ${global.pairing}\n`);
             await sleep(4000);
-            const code = await lilychan.requestPairingCode(global.pairing,'MIZZZUUU');
+            const code = await lilychan.requestPairingCode(global.pairing,global.codePairing);
             console.log('Process...');
             console.log(`Your Pairing Code: ${chalk.yellow.bold((code))}`);
 }
