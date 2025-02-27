@@ -11,7 +11,7 @@ const chalk = require('chalk')
 const moment = require('moment-timezone')
 const hariini = moment.tz('Asia/Jakarta').format('dddd, DD MMMM YYYY')	
 const time = moment(Date.now()).tz('Asia/Jakarta').locale('id').format('HH:mm:ss z')
-const son = JSON.parse(fs.readFileSync('./Storage/kata-kata_pak_sujud.json', "utf8"))
+
     var met = son[Math.floor(Math.random() * son.length)]
 global.testing = ''
 //====== [ SETTING PAIRING & TOKEN ] ========//
