@@ -465,6 +465,8 @@ Nama saya ${global.botname}, Saya adalah Assistant dari ${global.ownername} yang
 > ststusimg
 > statusvideo
 > ststusaudio
+> swtgmedia
+> swtgtxt
 > cekidch
 > cekbot
 > clearsesi
