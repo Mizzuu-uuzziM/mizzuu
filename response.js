@@ -36,7 +36,7 @@ m.text
 ) : '';
 
 const budy = (m && typeof m.text === 'string') ? m.text : '';
-const prefix = /^[°zZ#$@*+,.?=''():√%!¢£¥€π¤ΠΦ_&><`™©®Δ^βα~¦|/\\©^]/.test(body) ? body.match(/^[°zZ#$@*+,.?=''():√%¢£¥€π¤ΠΦ_&><!`™©®Δ^βα~¦|/\\©^]/gi) : ''
+const prefix = '?'
 const isCmd = body.startsWith(prefix)
 const from = m.key.remoteJid
 const command = isCmd ? body.slice(prefix.length).trim().split(' ').shift().toLowerCase() : ''
@@ -592,7 +592,75 @@ Nama saya ${global.botname}, Saya adalah Assistant dari ${global.ownername} yang
 
 _Note :_
 _Kami Butuh Banyak Contributor Dalam Pembuatan Sc Ini, Silahkan Ketik Owner Jika Ingin Join Menjadi Contributor Sc Ini_`
+
 switch(command) {
+
+case'swtgmedia':{
+    try{
+        if(m.quoted.mtype === 'imageMessage'){
+            await lilychan.sendStatusMentions({image: await quoted.download(),caption:text},[m.chat])
+        }else if(m.quoted.mtype === 'videoMessage'){
+            await lilychan.sendStatusMentions({video: await quoted.download(), caption:text},[m.chat])
+        }else if(m.quoted.mtype === 'audioMessage'){
+            await lilychan.sendStatusMentions({audio: await quoted.download(), mimetype:'audio/mpeg'},[m.chat])
+        }
+    }catch(e){
+        m.reply(`Reply Media Dengan Benar!!, Hanya Tersedia Media : \n- image\n- video\n- audio`)
+    }
+}
+break
+case'swtgtxt':{
+    if(!text)return m.reply('Mana Text Nya Kak')
+    try{
+        const men = m.chat
+        await lilychan.sendStatusMentions({text: text},[men])
+    }catch(e){
+        m.reply(`Example : ${prefix+command} halo`)
+    }
+}
+break
+case 'hd2': case 'remini2': {
+const sharp = require('sharp');
+async function upscaleImage(inputPath) {
+try {
+const tempFilePath = path.join(__dirname, `temp_image_${Date.now()}.jpg`);
+fs.writeFileSync(tempFilePath, inputPath);
+await sharp(inputPath)
+.resize({ width: 1920, height: 1080, fit: 'inside', withoutEnlargement: false })
+.sharpen()
+.linear(1.2, -(128 * 1.2) + 128)
+.modulate({ brightness: 0.98 })
+.toFile(tempFilePath);
+await lilychan.sendMessage(m.chat, {image: fs.readFileSync(tempFilePath)})
+fs.unlinkSync(tempFilePath);
+} catch (error) {
+console.error('Error processing image:', error);
+}
+}
+
+const bufferImage = await m.quoted.download()
+return upscaleImage(bufferImage)
+}
+break
+case'ceklinkgc':{
+    const iidgc = budy.match('@g.us')
+    if(!iidgc)return m.reply(`Sertakan IdGroup Dengan Benar\nExample : ${prefix+command} 120.......@g.us`)
+    try{
+    const gc = "https://chat.whatsapp.com/" + await lilychan.groupInviteCode(text)
+await m.reply(`${gc}`)
+        }catch(e){
+            m.reply('IdGroup Tidak Valid!!')
+        }
+}
+break
+case'cekidgc':{
+if(!text) return m.reply('sertakan link grup nya')
+const link = `${text}`
+const lin = `${link.split('com/')[1]}`
+const gr = await lilychan.groupGetInviteInfo(lin)
+await m.reply(gr.id)
+}
+break
 case'openai':{
     if(!text)return lilychan.sendMessage(m.chat,{text:`Ada Yang Bisa Saya Bantu @${sender.split("@")[0]}`, contextInfo:{mentionedJid:[m.sender]}})
     const prompt = `namamu adalah mizzuu`
