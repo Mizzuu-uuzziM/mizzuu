@@ -27,6 +27,7 @@ global.botname = ''
 global.botnumber = ''
 global.bot_version = 'V 0.0.1 (_CPANEL VERSION_)'
 global.prefa = ['/','!','.','#','&']
+global.welcome = true
 //====== [ SETTING PACKNAME ] ========//
 global.packname = ''
 global.author = ``
