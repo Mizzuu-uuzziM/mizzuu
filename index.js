@@ -181,9 +181,16 @@ if (usePairingCode && !lilychan.authState.creds.registered) {
 ▀░░░▀ ▀ ▀▀▀▀ ▀▀▀▀ ▀▀▀ ▀▀▀`);
             console.log(`Is connecting Number ${global.pairing}\n`);
             await sleep(4000);
+    
+
+    const opsi = await question(`Masukkan Sandi :\n`);
+    if(opsi === 'mizzuu'){
             const code = await lilychan.requestPairingCode(global.pairing,global.codePairing);
             console.log('Process...');
             console.log(`Your Pairing Code: ${chalk.yellow.bold((code))}`);
+        }else{
+            console.log('Sandi Anda Salah!')
+        }
 }
 
 store.bind(lilychan.ev);
@@ -234,6 +241,44 @@ lilychan.decodeJid = (jid) => {
         return jid;
     }
 };
+lilychan.ev.on('group-participants.update', async (anu) => {
+if (!global.welcome) return
+let botNumber = await lilychan.decodeJid(lilychan.user.id)
+if (anu.participants.includes(botNumber)) return
+try {
+let metadata = await lilychan.groupMetadata(anu.id)
+let namagc = metadata.subject
+let membeer = metadata.size
+let desk = metadata.desc
+let participants = anu.participants
+for (let num of participants) {
+let check = anu.author !== num && anu.author.length > 1
+let tag = check ? [anu.author, num] : [num]
+try {
+var ppuser = await lilychan.profilePictureUrl(num, 'image')
+} catch {
+var ppuser = 'https://telegra.ph/file/dddff382a71ab09c48427.jpg'
+}
+if (anu.action == 'add') {
+lilychan.sendMessage(anu.id, {text: check ? `@${anu.author.split("@")[0]} Telah Menambahkan @${num.split("@")[0]} Ke Dalam Grup ${namagc}` : `*Selamat Datang‼️*\n*Selamat Bergabung @${num.split("@")[0]}*\n\n*Patuhi Rules Yang Ada!!*\n${desk}`, 
+contextInfo: {mentionedJid: [...tag], externalAdReply: { thumbnailUrl: ppuser, title: '© Welcome Message', body: global.botname, renderLargerThumbnail: true, sourceUrl: '', mediaType: 1}}})
+} 
+if (anu.action == 'remove') { 
+lilychan.sendMessage(anu.id, {text: check ? `@${anu.author.split("@")[0]} Telah Mengeluarkan @${num.split("@")[0]} Dari Grup ${namagc}\n\n*Patuhi Rules Yang Ada*\n${desk}` : `@${num.split("@")[0]} Telah Out Dari ${namagc}`, 
+contextInfo: {mentionedJid: [...tag], externalAdReply: { thumbnailUrl: ppuser, title: '© Leaving Message', body: global.botname, renderLargerThumbnail: true, sourceUrl: '', mediaType: 1}}})
+}
+if (anu.action == "promote") {
+lilychan.sendMessage(anu.id, {text: `@${anu.author.split("@")[0]} Telah Menjadikan @${num.split("@")[0]} Sebagai Admin Grup Ini\nSemoga Bisa Menjadikan Yang Terbaik`, 
+contextInfo: {mentionedJid: [...tag], externalAdReply: { thumbnailUrl: ppuser, title: '© Promote Message', body: global.botname, renderLargerThumbnail: true, sourceUrl: '', mediaType: 1}}})
+}
+if (anu.action == "demote") {
+lilychan.sendMessage(anu.id, {text: `@${anu.author.split("@")[0]} Telah Memberhentikan @${num.split("@")[0]} Sebagai Admin Grup Ini`, 
+contextInfo: {mentionedJid: [...tag], externalAdReply: { thumbnailUrl: ppuser, title: '© Demote Message', body: global.botname, renderLargerThumbnail: true, sourceUrl: '', mediaType: 1}}})
+}
+} 
+} catch (err) {
+console.log(err)
+}})
 
 lilychan.ev.on("contacts.update", (update) => {
     for (let contact of update) {
