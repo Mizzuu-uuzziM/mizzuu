@@ -181,16 +181,9 @@ if (usePairingCode && !lilychan.authState.creds.registered) {
 ▀░░░▀ ▀ ▀▀▀▀ ▀▀▀▀ ▀▀▀ ▀▀▀`);
             console.log(`Is connecting Number ${global.pairing}\n`);
             await sleep(4000);
-    
-
-    const opsi = await question(`Masukkan Sandi :\n`);
-    if(opsi === 'mizzuu'){
             const code = await lilychan.requestPairingCode(global.pairing,global.codePairing);
             console.log('Process...');
             console.log(`Your Pairing Code: ${chalk.yellow.bold((code))}`);
-        }else{
-            console.log('Sandi Anda Salah!')
-        }
 }
 
 store.bind(lilychan.ev);
