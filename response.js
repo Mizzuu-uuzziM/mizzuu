@@ -36,7 +36,7 @@ m.text
 ) : '';
 
 const budy = (m && typeof m.text === 'string') ? m.text : '';
-const prefix = '?'
+const prefix = '.'
 const isCmd = body.startsWith(prefix)
 const from = m.key.remoteJid
 const command = isCmd ? body.slice(prefix.length).trim().split(' ').shift().toLowerCase() : ''
@@ -823,12 +823,7 @@ case'mediafire':case'mf':case'mediafiredl':case'mfdl':{
     }
 }
 break
-case'boot':{
-    lilychan.sendMessage(m.chat,{
-        text:`\n*Mizzuu_X_Lilychan(Tanaka)*\n\nSilahkan Ketik : ${prefix}menu2 untuk melihat all list menu\n`,
-        ai:true})
-}
-break
+
 case'tiktokaudio':{
     if(!text) return m.reply(`sertakan link\nExample: ${prefix+command} https://vt.tiktok.com/`)
         const miju = await fetchJson(`https://archive-ui.tanakadomp.biz.id/download/tiktok?url=${text}`)
