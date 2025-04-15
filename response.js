@@ -558,6 +558,7 @@ ${head}
 │${moji} blackbox
 ║${moji} deepsek
 │${moji} luminai
+│${moji} autoai
 ║┗─⊱
 ║
 │┏─═ *『Menu_Owner』* ═─⊱
