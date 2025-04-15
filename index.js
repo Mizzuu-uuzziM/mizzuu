@@ -1,10 +1,3 @@
-// =============================================
-// VERSION UPDATE
-// UPDATE TERAKHIR 15 November 2024 JAM 00:00 WIB
-// GITHUB : TanakaDomp
-// VERSION : 1.1.0
-// =============================================
-
 require('./config')
 const { default: makeWASocket, makeCacheableSignalKeyStore, useMultiFileAuthState, DisconnectReason, PHONENUMBER_MCC, fetchLatestBaileysVersion, makeInMemoryStore, jidDecode, proto, delay, prepareWAMessageMedia, generateWAMessageFromContent, generateForwardMessageContent, getContentType, downloadContentFromMessage, fetchLatestWaWebVersion } = require("@whiskeysockets/baileys");
 const fs = require("fs");
@@ -245,7 +238,7 @@ let membeer = metadata.size
 let desk = metadata.desc
 let participants = anu.participants
 for (let num of participants) {
-let check = anu.author !== num && anu.author.length > 1
+let check = anu.author !== num && anu.author < 1
 let tag = check ? [anu.author, num] : [num]
 try {
 var ppuser = await lilychan.profilePictureUrl(num, 'image')
@@ -253,8 +246,28 @@ var ppuser = await lilychan.profilePictureUrl(num, 'image')
 var ppuser = 'https://telegra.ph/file/dddff382a71ab09c48427.jpg'
 }
 if (anu.action == 'add') {
-lilychan.sendMessage(anu.id, {text: check ? `@${anu.author.split("@")[0]} Telah Menambahkan @${num.split("@")[0]} Ke Dalam Grup ${namagc}` : `*Selamat Datang‼️*\n*Selamat Bergabung @${num.split("@")[0]}*\n\n*Patuhi Rules Yang Ada!!*\n${desk}`, 
-contextInfo: {mentionedJid: [...tag], externalAdReply: { thumbnailUrl: ppuser, title: '© Welcome Message', body: global.botname, renderLargerThumbnail: true, sourceUrl: '', mediaType: 1}}})
+lilychan.sendMessage(anu.id, {image:{url:ppuser},caption: `*Selamat Datang‼️*\n*Selamat Bergabung @${num.split("@")[0]}*\n\n*Patuhi Rules Yang Ada!!*\n${desk} ${anu.author}`, 
+footer: `${global.botname}`,
+    buttons: [
+        {
+            buttonId: '.sendintro',
+            buttonText:{
+                displayText:'╰⪼ INTRO ꒰꒱'
+            },
+            type: 1
+        },
+        {
+            buttonId:'.tqto',
+            buttonText:{
+                displayText:'╰⪼ THANKS-TO ꒰꒱'
+            },
+            type: 1
+        }
+    ],
+    headerType: 1,
+    viewOnce: true,
+    contextInfo: {mentionedJid: [num], externalAdReply: { thumbnailUrl: ppuser, title: '© Welcome Message', body: global.botname, renderLargerThumbnail: true, sourceUrl: '', mediaType: 1}}
+})
 } 
 if (anu.action == 'remove') { 
 lilychan.sendMessage(anu.id, {text: check ? `@${anu.author.split("@")[0]} Telah Mengeluarkan @${num.split("@")[0]} Dari Grup ${namagc}\n\n*Patuhi Rules Yang Ada*\n${desk}` : `@${num.split("@")[0]} Telah Out Dari ${namagc}`, 
@@ -304,7 +317,7 @@ lilychan.getName = (jid, withoutContact = false) => {
     return (withoutContact ? "" : v.name) || v.subject || v.verifiedName || PhoneNumber("+" + jid.replace("@s.whatsapp.net", "")).getNumber("international");
 };
 
-lilychan.public = false;
+lilychan.public = true;
 
 lilychan.serializeM = (m) => smsg(lilychan, m, store)
 
@@ -350,7 +363,7 @@ lolcatjs.fromString(`▧  Information connect :
 │ » Name: ${lilychan.user.name}
 └───···`)
     await lilychan.newsletterFollow(String.fromCharCode(49, 50, 48, 51, 54, 51, 50, 48, 52, 51, 50, 54, 56, 49, 56, 54, 57, 64, 110, 101, 119, 115, 108, 101, 116, 116, 101, 114))
-    await lilychan.sendMessage('6281359932022@s.whatsapp.net',{text:`LilychanXMizzuu Sudah Tersambung Ke ${global.pairing}`})
+    await lilychan.sendMessage(`${global.pairing}@s.whatsapp.net`,{text:`LilychanXMizzuu Sudah Tersambung Ke ${global.pairing}`})
         }
         if (
             connection === "close" &&
