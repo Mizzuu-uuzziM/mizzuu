@@ -14,32 +14,33 @@ const time = moment(Date.now()).tz('Asia/Jakarta').locale('id').format('HH:mm:ss
 
     
 //====== [ SETTING PAIRING & TOKEN ] ========//
-global.pairing = ''
-global.codePairing = 'MIZZZUUU'//custom code pairing disini, maks 8 huruf
+global.pairing = '628888888888'
+global.codePairing = 'MMIIZZUU'//custom code pairing disini, maks 8 huruf
 //====== [ SETTING OWNER  ] ========//
-global.owner = [ '' ]
+global.owner = JSON.parse(fs.readFileSync('./Storage/owner.json', "utf8"))
 global.dontTagOwn = ''
-global.owner0 = ['']
-global.ownernumber = ['']
-global.ownername = ''
+global.owner0 = ['6281359932022@s.whatsapp.net']
+global.ownernumber = ['6281359932022']
+global.ownername = 'Mizzuu.html'
 //====== [ SETTING BOT ] ========//
-global.botname = ''
+global.botname = 'Mizzuu • Assistant'
 global.botnumber = ''
 global.bot_version = 'V 0.0.1 (_CPANEL VERSION_)'
 global.prefa = ['/','!','.','#','&']
 global.welcome = true
+global.autoai = false
 //====== [ SETTING PACKNAME ] ========//
-global.packname = ''
-global.author = ``
+global.packname = 'MizzuuDepeloperChupu'
+global.author = `https://github.com/Mizzuu-uuzziM/mizzuu`
 global.themeemoji = '🍁'
 global.wm = "麻辣不老实"
-global.idch = '120xxxx@newsletter'
+global.idch = '120363304326811869@newsletter'
 global.github = 'https://github.com/Mizzuu-uuzziM'
-global.titlech = ''
+global.titlech = 'Mizzuu'
 //====== [ THEME URL & URL ] ========//
 
-global.thumbnail = 'https://files.catbox.moe/0oz144.jpg'
-global.Url = ''
+global.thumbnail = 'https://files.catbox.moe/roo10u.jpg'
+global.Url = 'https://github.com/Mizzuu-uuzziM'
 
 //====== [ GLOBAL PANEL ] ======//
 global.domain = '' // isi dengan domain panel lu
@@ -47,6 +48,13 @@ global.apikey = '' // Isi Apikey Plta Lu
 global.capikey = '' // Isi Apikey Pltc Lu
 global.eggsnya = '15' // id eggs yang dipakai
 global.location = '1' // id location
+
+//====== [ GLOBAL PANEL-2 ] =======//
+global.domain2 = ''
+global.apikey2 = ''
+global.capikey2 = ''
+global.eggsnya2 = '15'
+global.location2 = '1'
 
 //====== [ GLOBAL MESSAGES  ] ========//
 global.mess = {
