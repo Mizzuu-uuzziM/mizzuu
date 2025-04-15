@@ -10,11 +10,12 @@ const os = require('os')
 const chalk = require('chalk')
 const FormData = require('form-data');
 const cheerio = require('cheerio')
+const Jimp = require('jimp')
 const moment = require("moment-timezone")
 const { addExif } = require('./App/function/exif')
 const { smsg, formatDate, getTime, getGroupAdmins, formatp, await, sleep, runtime, clockString, msToDate, sort, toNumber, enumGetKey, fetchJson, getBuffer, json, delay, format, logic, generateProfilePicture, parseMention, getRandom, fetchBuffer, buffergif, GIFBufferToVideoBuffer, totalcase } = require('./App/function/myfunc'); 
 const { bytesToSize, checkBandwidth, formatSize, jsonformat, nganuin, shorturl, color } = require("./App/function/funcc");
-const { toAudio, toPTT, toVideo, ffmpeg, addExifAvatar } = require('./App/function/converter')
+const { convertToaudio, toAudio, toPTT, toVideo, ffmpeg, addExifAvatar } = require('./App/function/converter')
 const { addPremiumUser, getPremiumExpired, getPremiumPosition, expiredCheck, checkPremiumUser, getAllPremiumUser } = require('./App/function/premiun');
 let premium = JSON.parse(fs.readFileSync('./Storage/premium.json'));
 const { tiktoksearch, tiktokdl, Facebook } = require('./App/scraper/downloader.js');
@@ -36,7 +37,7 @@ m.text
 ) : '';
 
 const budy = (m && typeof m.text === 'string') ? m.text : '';
-const prefix = '.'
+const prefix = /^[°zZ#$@*+,.?=''():√%!¢£¥€π¤ΠΦ_&><`™©®Δ^βα~¦|/\\©^]/.test(body) ? body.match(/^[°zZ#$@*+,.?=''():√%¢£¥€π¤ΠΦ_&><!`™©®Δ^βα~¦|/\\©^]/gi) : ''
 const isCmd = body.startsWith(prefix)
 const from = m.key.remoteJid
 const command = isCmd ? body.slice(prefix.length).trim().split(' ').shift().toLowerCase() : ''
@@ -396,6 +397,37 @@ if (mangtaf && body) {
    return !0;
   });
 }
+async function pinterestn(query) {
+	const {
+		data
+	} = await axios.get(`https://www.pinterest.com/resource/BaseSearchResource/get/`, {
+		params: {
+			source_url: `/search/pins/?q=${query}`,
+			data: JSON.stringify({
+				options: {
+					isPrefetch: false,
+					query: query,
+					scope: "pins",
+					no_fetch_context_on_resource: false
+				},
+				context: {}
+			})
+		}
+	});
+	const container = [];
+	const results = data.resource_response.data.results.filter(v => v.images?.orig);
+	results.forEach(result => {
+		container.push({
+			upload_by: result.pinner.username,
+			fullname: result.pinner.full_name,
+			followers: result.pinner.follower_count,
+			caption: result.grid_title,
+			image: result.images.orig.url,
+			source: "https://id.pinterest.com/pin/" + result.id
+		});
+	});
+	return container;
+};
 //================== [ CONSOL LOGG] ==================//
 if (m.message) {            
     console.log(chalk.cyan(`────────────『 ${chalk.redBright('从ㅌㄹㄹㅂGㅌ区')} 』────────────`));
@@ -425,179 +457,1020 @@ dir.map(amount => session += (fs.statSync(path.join(sessions, amount))).size);
     await lilychan.sendMessage(towner,{text: 'saatnya hapus sesion'})
     await sleep('700000000')
 }*/
+async function upscale(buffer, size = 2, anime = false) {
+	try {
+		return await new Promise((resolve, reject) => {
+			if (!buffer) return reject("undefined buffer input!");
+			if (!Buffer.isBuffer(buffer)) return reject("invalid buffer input");
+			if (!/(2|4|6|8|16)/.test(size.toString())) return reject("invalid upscale size!");
+			
+			Jimp.read(Buffer.from(buffer))
+				.then(image => {
+					const { width, height } = image.bitmap;
+					let newWidth = width * size;
+					let newHeight = height * size;
+					const form = new FormData();
+					form.append("name", "upscale-" + Date.now());
+					form.append("imageName", "upscale-" + Date.now());
+					form.append("desiredHeight", newHeight.toString());
+					form.append("desiredWidth", newWidth.toString());
+					form.append("outputFormat", "png");
+					form.append("compressionLevel", "none");
+					form.append("anime", anime.toString());
+					form.append("image_file", buffer, {
+						filename: "upscale-" + Date.now() + ".png",
+						contentType: 'image/png',
+					});
+					axios.post("https://api.upscalepics.com/upscale-to-size", form, {
+						headers: {
+							...form.getHeaders(),
+							origin: "https://upscalepics.com",
+							referer: "https://upscalepics.com"
+						}
+					})
+					.then(res => {
+						const data = res.data;
+						if (data.error) return reject("something error from upscaler api!");
+						resolve(data.bgRemoved);
+					})
+					.catch(reject);
+				})
+				.catch(reject);
+		});
+	} catch (e) {
+		return { status: false, message: e };
+	}
+}
+/*
+Weem :
+https://whatsapp.com/channel/0029Vb9ZfML6GcGFm9aPgh0W*/
+
+
+
+async function arisu(userPrompt, sessionId) {
+    const style = `kamu adalah Mizzuu Assistant, yang dibuat oleh tim fasturl lalu di kembangkan oleh Mizzuu dan bertujuan untuk membantu semua orang. pakailah bahasa indonesia gaul. kata aku dan kamu, ubah menjadi gua dan lu. pakailahlah gaya bicara yang tidak menunjukkan bahwa kamu itu ai. sertakan emotion lucu di setiap balasan kamu`;
+
+    const apiUrl = `https://fastrestapis.fasturl.cloud/aillm/gpt-4o-turbo?ask=${encodeURIComponent(userPrompt)}&style=${encodeURIComponent(style)}&sessionId=${sessionId}`;
+
+    try {
+        const response = await axios.get(apiUrl);
+        return response.data.result || 'Maaf, tidak ada jawaban yang tersedia.';
+    } catch (error) {
+        console.error('Error:', error);
+        return 'Maaf, terjadi kesalahan saat mengambil data.';
+    }
+}
+if(global.autoai === true){
+    if (m.isGroup === false){
+    if (fromMe === false){
+    try {
+        const result = await arisu(budy, m.sender);
+        return m.reply(result);
+    } catch (error) {
+        return m.reply('Terjadi kesalahan saat memproses permintaan Anda.');
+        }
+        }
+    }
+}
+var mot = ["▧","જ⁀➴","ଳ","꒰꒱","𓆩❦︎𓆪","༺","༻","⫘","𓏵","╰⪼"]
+var moji = mot[Math.floor(Math.random() * mot.length)]
+const head = "`▧ I N F O R M A T I O N`"
 const teksmenu = `${ucapanWaktu}${emojiwaktu} @${sender.split("@")[0]}
 
 Nama saya ${global.botname}, Saya adalah Assistant dari ${global.ownername} yang siap membantu siapa pun
-▬▭▬▭▬▭▬▭⟨⟨⟨  *_INFORMASI BOT_*  ⟩⟩⟩▭▬▭▬▭▬▭▬
 
+${head}
+╰⪼ *TANGGAL : ${hariini}*
+╰⪼ *JAM : ${time2}*
+╰⪼ *OWNER : ${global.ownername}*
+╰⪼ *VERSION : ${global.bot_version}*
+╰⪼ *RUNTIME : ${runtime(process.uptime())}*
+╰⪼ *STATUS : ${lilychan.public ? "Public" : "Self"}*
 
-*📅  TANGGAL : ${hariini}*
-*🕛  JAM : ${time2}*
-*👤  OWNER : ${global.ownername}*
-*🖥️  BOT VERSION : ${global.bot_version}*
-*⏳  RUNTIME : _${runtime(process.uptime())}_*
-
-
-▬▭▬▭▬▭▬▭▬▭▬▭▬▭▬▭▬
-*♪ ~ Menu Ai*
-> ai
-> google
-> ~gpt~ (_Coming Soon_)
-> ~blackbox~ (_Coming Soon_)
-> openai
-> gemini 
-> microsoft
-> blackbox
-> deepsek
-> luminai
-
-*♪ ~ Menu Owner*
-> self
-> public
-> ping
-> rumtime
-> addprem
-> delprem
-> trackip
-> call
-> hidetag
-> statustext
-> ststusimg
-> statusvideo
-> ststusaudio
-> swtgmedia
-> swtgtxt
-> cekidch
-> cekbot
-> clearsesi
-> backup
-> upchtext
-> upchimg
-> upchvid
-> get
-> ceklist
-> delreq
-> resetlinkgc
-> linkgc
-> done
-
-*♪ ~ Menu Search*
-> tiktoksearch
-> play
-> spotifysearch
-> spotifysearch2
-> cosplayer
-> cecan
-
-*♪ ~ Menu Download*
-> tiktokdl
-> tiktokaudio
-> ~teraboxdl~ (ComingSoon)
-> igdl
-> igdl2
-> reddl
-> douyindl
-> spotifydl
-> ytmp4
-> ytmp3
-> mediafire
-
-*♪ ~ Menu Group*
-> hidetag
-> close
-> open
-> kick
-> add
-> everyone
-
-*♪ ~ Menu Convert*
-> sticker
-> smaker
-> bratvid
-> qcr/qcrandom
-> qc
-> tourl
-> removebg
-> ~smeme~ (dalam pengembangan)
-> smeme2
-> brat
-> furbrat
-> carbon
-> createqr
-> spp
-> ~rvo~ (dalam project)
-> rvo2
-> emojicombo
-> ~hd~ (ComingSoon)
-> flamingtext
-> bass
-> blown
-> deep
-> earrape
-> fast
-> fat
-> nightcore
-> reverse
-> robot
-> slow
-> smooth
-> squirrel
-
-*♪ ~ Menu Fun*
-> cekkhodam
-> cekkontol
-> cekmemek
-> cekkelamin
-> cekistri
-> cekumur
-> kerangajaib
-> suitbot
-> kalender
-> tanggal
-> req
-> rating
-> pantun
-
-*♪ ~ Menu Panel Pterodactyl*
-> 1gb
-> 2gb
-> 3gb
-> 4gb
-> 5gb
-> 6gb
-> 7gb
-> 8gb
-> 9gb
-> 10gb
-> 11gb
-> 12gb
-> 13gb
-> 14gb
-> 15gb
-> unli( ∞ )
-> listsrv
-> delsrv
-> cadmin
-
-*♪ ~ Eval*
-• ~
-• ~>
-• $
-• #
-
-*♪ ~ Testing*
-> tes
-> boot
-> tesip
-
-▬▭▬▭▬▭▬▭▬▭▬▭▬▭▬▭▬
-
+͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏
+╔─═「 *𓏵 L I S T - M E N U 𓏵* 」
+│┏─═ *『Menu_Ai』* ═─⊱
+║${moji} ai
+│${moji} google
+║${moji} openai
+│${moji} gemini
+║${moji} microsoft
+│${moji} blackbox
+║${moji} deepsek
+│${moji} luminai
+║┗─⊱
+║
+│┏─═ *『Menu_Owner』* ═─⊱
+║${moji} self
+│${moji} public
+║${moji} addprem
+│${moji} delprem
+║${moji} trackip
+│${moji} call
+║${moji} addowner
+│${moji} dellowner
+│${moji} statustext
+║${moji} statusimg
+│${moji} statusvideo
+║${moji} statusaudio
+│${moji} swtgmedia
+║${moji} swtgtxt
+│${moji} cekbot
+║${moji} clearsesi
+│${moji} backup
+║${moji} upchtext
+│${moji} upchimg
+║${moji} upchvid
+│${moji} delreq
+║${moji} ceklist
+│${moji} resetlinkgc
+║${moji} formatdone
+│┗─⊱
+║
+║┏─═ *『Menu_Search & Users』* ═─⊱
+│${moji} tiktoksearch
+║${moji} play
+║${moji} spotifysearch
+│${moji} cosplayer
+║${moji} cecan
+│${moji} runtime
+║${moji} ping
+│${moji} cekidch
+║${moji} get
+║${moji} confess
+│┗─⊱
+║
+║┏─═ *『Menu_Download』* ═─⊱
+│${moji} tiktokdl
+║${moji} tiktokaudio
+│${moji} igdl
+║${moji} igdl2
+│${moji} reddl
+║${moji} douyindl
+│${moji} spotifydl
+║${moji} ytmp3
+│${moji} ytmp4
+║${moji} mediafire
+│┗─⊱
+║
+║┏─═ *『Menu_Group』* ═─⊱
+│${moji} hidetag
+║${moji} close
+│${moji} open
+║${moji} kick
+│${moji} add
+║${moji} everyone
+│${moji} sendintro
+║${moji} addintro
+│┗─⊱
+│
+║┏─═ *『Menu_Convert』* ═─⊱
+│${moji} sticker
+║${moji} smaker
+│${moji} bratvid
+║${moji} qcr(qcrandom)
+│${moji} qc
+║${moji} tourl
+│${moji} removebg
+║${moji} smeme
+│${moji} brat
+║${moji} furbrat
+│${moji} carbon
+║${moji} createqr
+│${moji} spp
+║${moji} rvon
+║${moji} emojicombo
+│${moji} ~hd~ (coming soon)
+║${moji} flamingtext
+│${moji} bass
+║${moji} blown
+│${moji} deep
+║${moji} earrape
+│${moji} fast
+║${moji} fat
+│${moji} nightcore
+║${moji} reverse
+│${moji} robot
+║${moji} slow
+│${moji} smooth
+║${moji} squirrel
+║${moji} wm
+│┗─⊱
+║
+║┏─═ *『Menu_Fun』* ═─⊱
+│${moji} cekkhodam
+║${moji} cekkontol
+│${moji} cekmemek
+║${moji} cekkelamin
+│${moji} cekistri
+║${moji} cekumur
+│${moji} kerang ajaib
+║${moji} suitbot
+│${moji} kalender
+║${moji} tanggal
+│${moji} req
+║${moji} rating
+│${moji} pantun
+║┗─⊱
+│
+│┏─═ *『Menu_Panel_Pterodactyl』* ═─⊱
+║${moji} 1gb
+│${moji} 2gb
+║${moji} 3gb
+│${moji} 4gb
+║${moji} 5gb
+│${moji} 6gb
+║${moji} 7gb
+│${moji} 8gb
+║${moji} 9gb
+│${moji} 10gb
+║${moji} 11gb
+│${moji} 12gb
+║${moji} 13gb
+│${moji} 14gb
+║${moji} 15gb
+│${moji} unli( ∞ )
+║${moji} listsrv(owner)
+│${moji} delsrv(owner)
+│${moji} delusr(owner)
+║${moji} cadmin(owner)
+│┗─⊱
+║
+│┏─═ *『Menu_Panel_Pterodactyl_Private/2』* ═─⊱
+║${moji} 1gbv
+│${moji} 2gbv
+║${moji} 3gbv
+│${moji} 4gbv
+║${moji} 5gbv
+│${moji} 6gbv
+║${moji} 7gbv
+│${moji} 8gbv
+║${moji} 9gbv
+│${moji} 10gbv
+│${moji} unliv( ∞ )
+║${moji} listsrv2(owner)
+│${moji} delsrv2(owner)
+│${moji} delusr2(owner)
+║${moji} cadmin2(owner)
+║┗─⊱
+║┏─═ *『 Eval 』* ═─⊱
+│${moji} ~
+║${moji} #
+│${moji} ~>
+║${moji} $
+│┗─⊱
+╚─═─═─═─═─═─═─═⪩
 _Note :_
 _Kami Butuh Banyak Contributor Dalam Pembuatan Sc Ini, Silahkan Ketik Owner Jika Ingin Join Menjadi Contributor Sc Ini_`
 
 switch(command) {
+case "cadmin2": {
+if (!isCreator) return m.reply(mess.owner)
+let domain = global.domain2
+let apikey = global.apikey2
+let s = q.split(',')
+let email = s[0];
+let username = s[0]
+let nomor = s[1]
+if (s.length < 2) return m.reply(`*Format salah!*
+Penggunaan:
+${prefix + command} user,nomer`)
+if (!username) return m.reply(`Ex : ${prefix+command} Username,@tag/nomor\n\nContoh :\n${prefix+command} example,@user`)
+if (!nomor) return m.reply(`Ex : ${prefix+command} Username,@tag/nomor\n\nContoh :\n${prefix+command} example,@user`)
+let password = username + "MIZZUU28"
+let nomornya = nomor.replace(/[^0-9]/g, '')+'@s.whatsapp.net'
+let f = await fetch(domain + "/api/application/users", {
+"method": "POST",
+"headers": {
+"Accept": "application/json",
+"Content-Type": "application/json",
+"Authorization": "Bearer " + apikey
+},
+"body": JSON.stringify({
+"email": username + "@mizzuu.eu.org",
+"username": username,
+"first_name": username,
+"last_name": "Memb",
+"language": "en",
+ "root_admin" : true,  
+"password": password.toString()
+})
 
+})
+
+let data = await f.json();
+
+if (data.errors) return m.reply(JSON.stringify(data.errors[0], null, 2));
+
+let user = data.attributes
+
+let tks = `
+TYPE: USER
+
+ID: ${user.id}
+USERNAME: ${user.username}
+EMAIL: ${user.email}
+NAME: ${user.first_name} ${user.last_name}
+CREATED AT: ${user.created_at}
+`
+    const listMessage = {
+
+        text: tks,
+
+    }
+
+	
+
+    await lilychan.sendMessage(m.chat, listMessage)
+
+    await lilychan.sendMessage(nomornya, {text: `_*BERIKUT DETAIL AKUN ADMIN  PANEL ANDA*_\n
+
+Email : ${email}
+Username :  ${username}
+Password: ${password}
+Login: ${domain}
+
+_*NOTE :*_
+_OWNER HANYA MENGIRIM 1X DATA AKUN ANDA MOHON DI SIMPAN BAIK BAIK KALAU DATA AKUN ANDA HILANG OWNER TIDAK DAPAT MENGIRIM AKUN ANDA LAGI_
+
+_Mau Script Ini? Ketik .sc_
+`,contextInfo: {mentionedJid: [m.sender], externalAdReply: {showAdAttribution: true, thumbnailUrl: global.thumbnail, title: `© ${global.ownername}`, body: null, sourceUrl: `${global.domain}`, renderLargerThumbnail: true, mediaType: 1}}
+}, {quoted : lilychan.chat})
+}
+break
+case "delsrv2": {
+      if (!isCreator) return m.reply(`khusus ${global.ownername}`)
+let domain = global.domain2
+let apikey = global.apikey2
+let srv = args[0]
+if (!srv) return m.reply('ID nya mana?')
+let f = await fetch(domain + "/api/application/servers/" + srv, {
+"method": "DELETE",
+"headers": {
+"Accept": "application/json",
+"Content-Type": "application/json",
+"Authorization": "Bearer " + apikey,
+}
+})
+let res = f.ok ? {
+errors: null
+} : await f.json()
+if (res.errors) return m.reply('*SERVER NOT FOUND*')
+m.reply('*SUCCESSFULLY DELETE THE SERVER*')
+}
+break
+case "delusr2": {
+  if (!isCreator) return m.reply(`khusus ${global.ownername}`)
+let domain = global.domain2
+let apikey = global.apikey2
+let usr = args[0]
+if (!usr) return m.reply('ID nya mana?')
+let f = await fetch(domain + "/api/application/users/" + usr, {
+"method": "DELETE",
+"headers": {
+"Accept": "application/json",
+"Content-Type": "application/json",
+"Authorization": "Bearer " + apikey
+}
+})
+let res = f.ok ? {
+errors: null
+} : await f.json()
+if (res.errors) return m.reply('*USER NOT FOUND*')
+m.reply('*SUCCESSFULLY DELETE THE USER*')
+} 
+break
+
+/*case "bagi":{
+    function bagi(angka1, angka2){
+        return angka1 / angka2
+    }
+    let t = text.split("/")
+    if(t.length < 2)return m.reply(`Contoh Penggunaan :\n${prefix+command} 1024/7`)
+    let a1 = t[0];
+    let a2 = t[1];
+    let samdeng = bagi(a1, a2)
+    m.reply('hasilnya = '+ samdeng)
+}
+break
+case "kali":{
+    function kali(angka1, angka2){
+        let hasil = angka1 * angka2
+        return hasil
+    }
+    let t = text.split("×")
+    if(t.length < 2)return m.reply(`Contoh Penggunaan :\n${prefix+command} 1024×7`)
+    let a1 = t[0];
+    let a2 = t[1];
+    let samdeng = kali(a1, a2)
+    m.reply('Hasilnya = '+ samdeng)
+}
+break*/
+case "unliv":
+case "1gbv":
+case "2gbv":
+case "3gbv":
+case "4gbv":
+case "5gbv":
+case "6gbv":
+case "7gbv":
+case "9gbv":
+case "10gbv": {
+    if (!isCreator && !isPremium) return m.reply('Maaf Kamu Belum Jadi User Premium Untuk Menjadi User Premium Silahkan Beli Ke Owner Dengan Cara Ketik .owner')
+if(command === '1gbv'){
+    var memo = '1024'
+    var cpu = '80'
+    var disk = '1024'
+}else if(command === '2gbv'){
+    var memo = '2048'
+    var cpu = '100'
+    var disk = '2024'
+}else if(command === '3gbv'){
+    var memo = '3072'
+    var cpu = '120'
+    var disk = '3072'
+}else if(command === '4gbv'){
+    var memo = '4094'
+    var cpu = '140'
+    var disk = '4094'
+}else if(command === '5gbv'){
+    var memo = '5120'
+    var cpu = '160'
+    var disk = '5120'
+}else if(command === '6gbv'){
+    var memo = '6144'
+    var cpu = '180'
+    var disk = '6144'
+}else if(command === '7gbv'){
+    var memo = '7168'
+    var cpu = '200'
+    var disk = '7168'
+}else if(command === '8gbv'){
+    var memo = '8192'
+    var cpu = '210'
+    var disk = '8192'
+}else if(command === '9gbv'){
+    var memo = '9216'
+    var cpu = '220'
+    var disk = '9216'
+}else if(command === '10gbv'){
+    var memo = '10240'
+    var cpu = '230'
+    var disk = '10240'
+}else if(command === 'unliv'){
+    var memo = '0'
+    var cpu = '0'
+    var disk = '0'
+}else{
+    m.reply("Ram Tidak Tersedia")
+}
+let t = text.split(',');
+if (t.length < 2) return m.reply(`*Format salah!*
+Penggunaan:
+${prefix + command} user,nomer`)
+let username = t[0];
+let u = m.quoted ? m.quoted.sender : t[1] ? t[1].replace(/[^0-9]/g, '') + '@s.whatsapp.net' : m.mentionedJid[0];
+let name = username + `${command}`
+let domain = global.domain2
+let egg = global.eggsnya2
+let loc = global.location2
+let apikey = global.apikey2
+let capikey = global.capikey2
+let email = username + "@mizzuu.com"
+const akunlo = 'https://files.catbox.moe/n60pjq.jpg'
+if (!u) return
+let d = (await lilychan.onWhatsApp(u.split`@`[0]))[0] || {}
+let password = username + "Mizu28"
+let f = await fetch(domain + "/api/application/users", {
+"method": "POST",
+"headers": {
+"Accept": "application/json",
+"Content-Type": "application/json",
+"Authorization": "Bearer " + apikey
+},
+"body": JSON.stringify({
+"email": email,
+"username": username,
+"first_name": username,
+"last_name": username,
+"language": "en",
+"password": password
+})
+})
+let data = await f.json();
+if (data.errors) return m.reply(JSON.stringify(data.errors[0], null, 2));
+let user = data.attributes
+let f2 = await fetch(domain + "/api/application/nests/5/eggs/" + egg, {
+"method": "GET",
+"headers": {
+"Accept": "application/json",
+"Content-Type": "application/json",
+"Authorization": "Bearer " + apikey
+}
+})
+m.reply (`
+
+ *WAIT....CREATE USER + SERVER ID :* ${user.id}
+© ~ Copyright By ${global.botname}
+`)
+const ctf = `Hai @${u} ${ucapanWaktu+emojiwaktu}
+
+ *EMail* : ${email}
+ *Username* : ${user.username}
+ *Password* : ${password}
+ *Login* : ${domain}
+
+_*NOTE :*_
+_OWNER HANYA MENGIRIM 1X DATA AKUN ANDA MOHON DI SIMPAN BAIK BAIK KALAU DATA AKUN ANDA HILANG OWNER TIDAK DAPAT MENGIRIM AKUN ANDA LAGI_
+
+_Mau sc Ini? ketik .sc_
+`
+await lilychan.sendMessage(u, {text: ctf,contextInfo: {mentionedJid: [m.sender], externalAdReply: {showAdAttribution: true, thumbnailUrl: global.thumbnail, title: `© ${global.ownername}`, body: null, sourceUrl: '', renderLargerThumbnail: true, mediaType: 1}}
+}, {quoted : lilychan.chat})
+let data2 = await f2.json();
+let startup_cmd = data2.attributes.startup
+
+let f3 = await fetch(domain + "/api/application/servers", {
+"method": "POST",
+"headers": {
+"Accept": "application/json",
+"Content-Type": "application/json",
+"Authorization": "Bearer " + apikey,
+},
+"body": JSON.stringify({
+"name": name,
+"description": " ",
+"user": user.id,
+"egg": parseInt(egg),
+"docker_image": "ghcr.io/parkervcp/yolks:nodejs_18",
+"startup": startup_cmd,
+"environment": {
+"INST": "npm",
+"USER_UPLOAD": "0",
+"AUTO_UPDATE": "0",
+"CMD_RUN": "npm start"
+},
+"limits": {
+"memory": memo,
+"swap": 0,
+"disk": disk,
+"io": 500,
+"cpu": cpu
+},
+"feature_limits": {
+"databases": 5,
+"backups": 5,
+"allocations": 1
+},
+deploy: {
+locations: [parseInt(loc)],
+dedicated_ip: false,
+port_range: [],
+},
+})
+})
+let res = await f3.json()
+if (res.errors) return m.reply(JSON.stringify(res.errors[0], null, 2))
+let server = res.attributes
+let p = await m.reply(`
+Halo ${pushname} ${ucapanWaktu+emojiwaktu} 
+Aku Sudah Send Data Panel Ke ${u}
+© ~ Copyright By ${global.botname}
+`)        
+} 
+break
+case "listsrv2": {
+  if (!isCreator) return m.reply(`Maaf, Anda tidak dapat melihat daftar server.`);
+  let domain = global.domain2
+  let capikey = global.capikey2
+  let apikey = global.apikey2
+  let page = args[0] ? args[0] : '1';
+  let f = await fetch(domain + "/api/application/servers?page=" + page, {
+    "method": "GET",
+    "headers": {
+      "Accept": "application/json",
+      "Content-Type": "application/json",
+      "Authorization": "Bearer " + apikey
+    }
+  });
+  let res = await f.json();
+  let servers = res.data;
+  let sections = [];
+  let messageText = `Berikut adalah daftar server yang berada di ${global.domain2} :\n\n`;
+  
+  for (let server of servers) {
+    let s = server.attributes;
+    
+    let f3 = await fetch(domain + "/api/client/servers/" + s.uuid.split`-`[0] + "/resources", {
+      "method": "GET",
+      "headers": {
+        "Accept": "application/json",
+        "Content-Type": "application/json",
+        "Authorization": "Bearer " + capikey
+      }
+    });
+    
+    let data = await f3.json();
+    let status = data.attributes ? data.attributes.current_state : s.status;
+    
+    messageText += `ID Server: ${s.id}\n`;
+    messageText += `Nama Server: ${s.name}\n`;
+    messageText += `Status: ${status}\n\n`;
+  }
+  
+  messageText += `Halaman: ${res.meta.pagination.current_page}/${res.meta.pagination.total_pages}\n`;
+  messageText += `Total Server: ${res.meta.pagination.count}`;
+  
+  await lilychan.sendMessage(m.chat, { text: messageText }, { quoted: m });
+  
+  if (res.meta.pagination.current_page < res.meta.pagination.total_pages) {
+    m.reply(`Gunakan perintah ${prefix+command} ${res.meta.pagination.current_page + 1} untuk melihat halaman selanjutnya.`);
+  }        
+}
+break;
+case "autoai":{
+    if(!isCreator) return m.reply(mess.owner)
+    if(text === 'on'){
+        global.autoai = true
+        m.reply(mess.done)
+    }else if(text === 'off'){
+        global.autoai = false
+        m.reply(mess.done)
+    }else{
+        m.reply("*`Perintah Tidak Ditemukan!!`*\n\nList Perintah ;\n-on\n-off")
+    }
+}
+break
+case "pinterest":
+case "pin":{
+    const query = text || 'random';
+    const amount = 5; // ambil 5 aja gausah maruk
+    try {
+        const { data } = await axios.get(`https://fastrestapis.fasturl.cloud/search/pinterest?name=${encodeURIComponent(query)}`);
+
+        if (data.status !== 200 || !data.result || data.result.length === 0) {
+            return await lilychan.sendMessage(m.chat, { text: `waaah gada gambar buat"${query}"` }, { quoted: m });
+        }
+
+        let cards = [];
+
+        for (let i = 0; i < Math.min(amount, data.result.length); i++) {
+            let imageData = data.result[i];
+
+            if (imageData.directLink) {
+                cards.push({
+                    image: { url: imageData.directLink },
+                    title: `Hasil Pencarian ${query}`,
+                    caption: `Klik url di bawah.`,
+                    footer: "Pinterest Search",
+                    buttons: [
+                        {
+                            name: "cta_url",
+                            buttonParamsJson: JSON.stringify({
+                                display_text: "Lihat di Pinterest",
+                                url: imageData.link
+                            })
+                        }
+                    ]
+                });
+            }
+        }
+
+        if (cards.length > 0) {
+            await lilychan.sendMessage(
+                m.chat,
+                {
+                    text: `nih kak! Pencarian: *${query}*`,
+                    footer: "Pinterest Search",
+                    cards: cards
+                },
+                { quoted: m }
+            );
+        } else {
+            await lilychan.sendMessage(m.chat, { text: `gada jir.` }, { quoted: m });
+        }
+
+    } catch (error) {
+        console.error(error);
+        await lilychan.sendMessage(m.chat, { text: `Terjadi kesalahan: ${error.message}` }, { quoted: m });
+    }
+}
+break
+case 'addintro': {
+if(!text) throw "masukan tek"
+const fs = require("fs");
+    let data = [];
+    if (fs.existsSync("./Storage/intro.json")) {
+        const fileContent = fs.readFileSync("./Storage/intro.json", "utf8");
+        data = JSON.parse(fileContent);
+    }
+
+    data.push({
+        id: m.chat,
+        textintro: text
+    });
+
+    fs.writeFileSync("./Storage/intro.json", JSON.stringify(data, null, 4), "utf8");
+    m.reply("Suksex");
+  }
+
+break
+case "sendintro":{
+const fs = require("fs");
+const data = JSON.parse(fs.readFileSync('./Storage/intro.json', 'utf8'));
+
+function getTextById(id) {
+    const result = data.find(item => item.id === id); 
+    return result ? result.textintro : 'Tidak Ada Intro Di Grup Ini';
+}
+
+const text = getTextById(m.chat);
+m.reply(text);
+}
+break
+case "wm":{
+    if (!quoted) return m.reply(`Balas Stiker Dengan Caption ${prefix + command}`);
+    if (!text) return m.reply(`Sertakan Text Untuk Mengganti Watermark dari Stiker`)
+
+    if (m.quoted.isAnimated === false) {
+        let media = await quoted.download();
+        let encmedia = await lilychan.sendImageAsSticker(m.chat, media, m, {
+            packname: text,
+            author: hariini
+        });
+        await fs.unlinkSync(encmedia);
+    } else if (m.quoted.isAnimated === true) {
+        let media = await quoted.download();
+        let encmedia = await lilychan.sendVideoAsSticker(m.chat, media, m, {
+            packname: text,
+            author: hariini
+        });
+        await fs.unlinkSync(encmedia);
+    } else {
+        return m.reply(`Kirim Stiker Lalu Balas Dengan Command : ${prefix+command}`);
+    }
+  }
+break
+case 'confess':{
+    let t = text.split("|")
+    if(t.length < 2) return m.reply(`!!Penggunaan Salah!!\nContoh Penggunaan : ${prefix+command} 628135993xxxx|hai halo`)
+    var kee = t[0];
+    var tekks = t[1];
+    const tok = `${kee}@s.whatsapp.net`
+    const cap = `
+*『 Confess Message 』*
+*Hallo @${tok.split("@")[0]}, Kamu Dapet Confess Dari seseorang nih*
+
+Pesan : ${tekks}
+`
+    await lilychan.sendMessage(tok, {text: cap, contextInfo: {mentionedJid: [tok]}})
+    await m.reply("Success")
+}
+break
+case 'pinterestn': case 'pinn': {
+				if (!text) return m.reply(`Enter Query!`);
+				await lilychan.sendMessage(m.chat,{react:{text: "⏳",key: m.key}})
+				async function createImage(url) {
+					const { imageMessage } = await generateWAMessageContent({
+						image: {
+							url
+						}
+					}, {
+						upload: lilychan.waUploadToServer
+					});
+					return imageMessage;
+				}
+				function shuffleArray(array) {
+					for (let i = array.length - 1; i > 0; i--) {
+						const j = Math.floor(Math.random() * (i + 1));
+						[array[i], array[j]] = [array[j], array[i]];
+					}
+				}
+				let push = [];
+				let anutrest = await pinterestn(text);
+				shuffleArray(anutrest);
+				let selectedImages = anutrest.slice(0, 5);
+				let i = 1;
+				for (let message of selectedImages) {
+					push.push({
+						body: proto.Message.InteractiveMessage.Body.fromObject({
+							text: `👤 *Diunggah oleh*: ${message.upload_by}\n` +
+							`📛 *Nama Lengkap*: ${message.fullname}\n` +
+							`👥 *Pengikut*: ${message.followers}\n` +
+							`📝 *Caption*: ${message.caption}`
+						}),
+						footer: proto.Message.InteractiveMessage.Footer.fromObject({
+							text: footer
+						}),
+						header: proto.Message.InteractiveMessage.Header.fromObject({
+							title: `*Gambar* - ${i++}`,
+							hasMediaAttachment: true,
+							imageMessage: await createImage(message.image)
+						}),
+						nativeFlowMessage: proto.Message.InteractiveMessage.NativeFlowMessage.fromObject({
+							buttons: [
+								{
+									"name": "cta_url",
+									"buttonParamsJson": `{
+										"display_text": "View Source 👀",
+										"url": "${message.source}", 
+										"merchant_url": "${message.source}"
+									}`
+								}
+							]
+						})
+					});
+				}
+				const msg = generateWAMessageFromContent(m.chat, {
+					viewOnceMessage: {
+						message: {
+							messageContextInfo: {
+								deviceListMetadata: {},
+								deviceListMetadataVersion: 2
+							},
+							interactiveMessage: proto.Message.InteractiveMessage.fromObject({
+								body: proto.Message.InteractiveMessage.Body.create({
+									text: mess.done
+								}),
+								footer: proto.Message.InteractiveMessage.Footer.create({
+									text: footer
+								}),
+								header: proto.Message.InteractiveMessage.Header.create({
+									hasMediaAttachment: false
+								}),
+								carouselMessage: proto.Message.InteractiveMessage.CarouselMessage.fromObject({
+									cards: [
+										...push
+									]
+								})
+							})
+						}
+					}
+				}, { 
+					quoted: m 
+				});
+				await lilychan.relayMessage(m.chat, msg.message, {
+					messageId: msg.key.id
+				});
+			}
+			
+			break
+case 'toaudio': 
+case 'tomp3': {
+				if (!/video/.test(mime) && !/audio/.test(mime)) return m.reply(`Reply Video/VN yang ingin dijadikan MP3 dengan caption ${prefix + command}`);
+				if (!quoted) return m.reply(`Reply Video/VN yang ingin dijadikan MP3 dengan caption ${prefix + command}`);
+				try {
+					await lilychan.sendMessage(m.chat,{react:{text:'⏳',key:m.key}})
+					let media = await quoted.download();
+					let audioBuffer = await toAudio(media);
+					await lilychan.sendMessage(m.chat, { 
+						audio: fs.readFileSync(audioBuffer), 
+						mimetype: 'audio/mp4'
+					}, { quoted: m });
+                    m.reply(`✅ Berhasil mengonversi ke MP3! 🎵`);
+				} catch (err) {
+					console.error('❌ Error:', err);
+                    m.reply(`❌ Gagal mengonversi ke MP3.`+ err);
+				}
+			}
+			break;
+
+case 'upscl': {
+				let q = m.quoted ? m.quoted : m;
+				let mime = (q.msg || q).mimetype || q.mediaType || "";
+				if (!mime) return m.reply(`Kirim/Balas Gambar Dengan Caption ${prefix + command}`);
+				if (!/image\/(jpe?g|png)/.test(mime)) 
+					return m.reply(`Media tidak support!`);
+				try {
+					const availableScales = [2, 4, 6];
+                    await lilychan.sendMessage(m.chat,{react:{text:'⏳',key:m.key}})
+					let media = await q.download();
+					let scale = availableScales.includes(parseInt(text)) ? parseInt(text) : 2;
+					let tag = `@${m.sender.split("@")[0]}`;		
+					let result = await upscale(media, scale);
+					let caption = "🌟 *Effect*: HD\n";
+					caption += `📩 *Requested by*: ${tag}\n`;
+					caption += `✨ *Source*: imageupscaler.com\n`;
+					caption += `🔍 *Skala*: ${scale}\n`;
+					caption += `📏 *Available Scales*: ${availableScales.join(", ")}\n\n`;
+					caption += "Terima kasih sudah menggunakan fitur ini ya, Kak! 😊";
+					await lilychan.sendMessage(m.chat,{react:{text:'☑️',key:m.key}})
+					await lilychan.sendMessage(m.chat, {
+						image: { url: result },
+						caption: caption,
+						mentions: [m.sender]
+					}, { 
+						quoted: m 
+					});
+				} catch (error) {
+					console.error(error);
+                    m.reply("❌ Ups, terjadi kesalahan saat memproses gambar. Coba lagi nanti ya, Kak!");
+				}
+			}
+break
+case 'rvonn': {
+    const { downloadContentFromMessage } = require('@whiskeysockets/baileys');
+    
+    if (!m.quoted || !m.quoted.message) {
+        m.reply('Reply pesan media yang memiliki view-once untuk digunakan.');
+        return;
+    }
+
+    let type = Object.keys(m.quoted.message)[0];
+    let q = m.quoted.message[type];
+    let mediaType = type.includes('video') ? 'video' : type.includes('image') ? 'image' : type.includes('audio') ? 'audio' : null;
+    
+    if (!mediaType) {
+        m.reply('Tipe media tidak didukung.');
+        return;
+    }
+
+    let media = await downloadContentFromMessage(q, mediaType);
+    let buffer = Buffer.from([]);
+    
+    for await (const chunk of media) {
+        buffer = Buffer.concat([buffer, chunk]);
+    }
+
+    if (mediaType === 'video') {
+        await lilychan.sendVideo(m.chat, buffer, q.caption || '', m);
+    } else if (mediaType === 'image') {
+        await lilychan.sendImage(m.chat, buffer, q.caption || '', m);
+    } else if (mediaType === 'audio') {
+        await lilychan.sendAudio(m.chat, buffer, m);
+    }
+}
+break
+case "rvon":{
+    if(m.quoted.viewOnce === true){
+        await lilychan.sendFile(m.chat, await quoted.download(), null, m.quoted.caption, m)
+    }else if(m.quoted.viewOnce === true && m.quoted.mtype === 'audioMessage'){
+        let file = await quoted.download
+        await lilychan.sendFile(m.chat,file,null,null,m )
+    }else{
+        m.reply("reply media dengan benar")
+    }
+}
+break
+case "toimg":{
+    try{
+        await lilychan.sendMessage(m.chat,{image:await quoted.download()},{quoted : m})
+    }catch ( e ){
+        m.reply("Terjadi Kesalahan Saat Membaca Jenis File")
+    }
+}
+break
+case "delowner": {
+if(!isCreator) return m.reply('Fitur Khusus Owner & Bot')
+  if (!text) return m.reply(`Example : ${prefix+command} 62813xxxx`);
+  try {
+    const kontributor = JSON.parse(fs.readFileSync('./Storage/owner.json', 'utf8'));
+    const index = kontributor.indexOf(text);
+    if (index === -1) return m.reply(`${text} tidak ditemukan di dalam daftar`);
+    kontributor.splice(index, 1);
+    fs.writeFileSync('./Storage/owner.json', JSON.stringify(kontributor, null, 2));
+    m.reply(`${text} berhasil dihapus dari daftar\n\n> Avz`);
+  } catch (err) {
+    console.error('Error reading or writing file:', err);
+    m.reply(`Terjadi kesalahan saat mengakses file`);
+  }
+}
+break;
+case "addowner":{
+if(!isCreator) return m.reply('Fitur Khusus Owner & Bot')
+  if (!text) return m.reply(`sertakan nomor\nExample : ${prefix+command} 62813xxx`);
+const bnnd = q.split("|")[0].replace(/[^0-9]/g, '')
+let ceknye = await lilychan.onWhatsApp(bnnd)
+if (ceknye.length == 0) return m.reply(`Masukkan Nomor Yang Valid Dan Terdaftar Di WhatsApp !!!`)
+  try {
+    const kontributor = JSON.parse(fs.readFileSync('./Storage/owner.json', 'utf8'));
+    kontributor.push(bnnd);
+    fs.writeFileSync('./Storage/owner.json', JSON.stringify(kontributor, null, 2));
+    m.reply(`Success Add To Owner ${bnnd}`);
+  } catch (err) {
+    console.error('Error reading or writing file:', err);
+    m.reply(`Terjadi kesalahan saat mengakses file`);
+  }
+    const jo = `Congratulation!!🎉 you have become the owner of this script.`
+  await lilychan.sendMessage(towner, {text: jo, contextInfo: {mentionedJid: [m.sender], externalAdReply: {showAdAttribution: true, thumbnailUrl: global.thumbnail, title: `© ${global.ownername}`, body: null, sourceUrl: '', renderLargerThumbnail: true, mediaType: 1}}}, {quoted:m})
+    await lilychan.sendMessage(m.chat,{audio:fs.readFileSync('./Storage/lukanegara.mp3'), mimetype: 'audio/mpeg', ptt:true})
+}
+break;
+case'welcome':{
+    if(!isCreator)return m.reply(mess.owner)
+    if(args[0] === 'on'){
+        global.welcome = true
+        m.reply(mess.done)
+    }else if(args[0] === 'off'){
+        global.welcome = false
+        m.reply(mess.done)
+    }else{
+        m.reply(`Example : ${prefix+command} on/off`)
+    }
+}
+break
 case'swtgmedia':{
+    if(!isCreator) return m.reply(mess.owner)
     try{
         if(m.quoted.mtype === 'imageMessage'){
             await lilychan.sendStatusMentions({image: await quoted.download(),caption:text},[m.chat])
@@ -708,6 +1581,7 @@ return lilychan.relayMessage(m.chat, res.message, {});
 }
 break
 case'self':case'public':{
+    if(!isCreator)return m.reply(mess.owner)
     if(command === 'public'){
         lilychan.public = true
         await m.reply(`Success menjadikan ${command}`)
@@ -1001,7 +1875,7 @@ case 'rednotedl': {
 }
 break
 case 'suitbot': {
-				if (!isPremium) return m.reply(mess.prem);
+				
 				const userChoice = text.toLowerCase();
 				const choices = ['batu', 'gunting', 'kertas'];
 				const botChoice = choices[Math.floor(Math.random() * choices.length)];
@@ -1043,29 +1917,7 @@ ${urlGrup}
 await lilychan.sendMessage(m.chat, {text: teks}, {quoted: m})
 }
 break
-case"tttes":{
 
-   const rndmImg = await fetchJson('https://raw.githubusercontent.com/Mizzuu-uuzziM/Mizzuu-uuzziM/refs/heads/main/source.json')
-
-const im = await rndmImg[Math.floor(Math.random() * rndmImg.length)]
-
-await m.reply(im.result)
-    
-}
-break
-case "pinterest": case "pin": {
-if (!text) return m.reply("example : tobrut")
-m.reply(mess.wait)
-await pinterest(text).then((res) => {
-if (res.length < 1) return m.reply("Error, Foto Tidak Ditemukan")
-let jumlah = 5
-if (res.length < jumlah) jumlah = res.length
-for (let e = 0; e < jumlah; e++) {
-lilychan.sendMessage(m.chat, {image: {url: res[e]}}, {quoted: m})
-}
-}).catch(e => m.reply(e.toString()))
-}
-break
 case "createqr": {
 if (!isCreator) return m.reply('*Khusus Pemilik!*')
 const qrcode = require('qrcode')
@@ -1091,75 +1943,7 @@ case'luminai':{
     }
 }
 break
-case 'spotifysearch': {
-    if (!text) return await m.reply('judul lagu nya mana bg')
-    try {
-        const data = await fetchJson(`https://archive-ui.tanakadomp.biz.id/search/spotify?q=${encodeURIComponent(text)}`);
-        if (Array.isArray(data.result) && data.result.length > 0) {
-            const results = data.result.map(track => ~
-`
 
-header: ${track.trackName},
-title: ${track.artistName},
-description: ${track.externalUrl},
-id: ${track.externalUrl},
-
-`
-).join(',');
-          /*await lilychan.sendMessage(m.key.remoteJid, {
-        document: fs.readFileSync("./package.json"),
-        mimetype: 'application/vnd.ms-powerpoint',
-        fileName: 'Hii ' + pushname,
-        fileLength: 999999999999,
-        pageCount: 100,
-        caption: "ini beton??",
-        footer: "© senn sop sepoken",
-        buttons: [{
-                buttonId: 'action',
-                buttonText: {
-                    displayText: 'ini pesan interactiveMeta'
-                },
-                type: 4,
-                nativeFlowInfo: {
-                    name: 'single_select',
-                    paramsJson: JSON.stringify({
-                        title: 'beton',
-                        sections: [{
-                            title: '( LIST ) Bengton!!',
-                            highlight_label: '😜',
-                            rows: [
-                                results
-                            ]
-                        }]
-                    })
-                }
-            }
-        ],
-        contextInfo: {
-            mentionedJid: [sender],
-            externalAdReply: {
-                thumbnailUrl: "https://raw.githubusercontent.com/TanakaDomp/uploder-db/main/uploads/tampilan_menu.jpeg",
-                mediaUrl: "https://raw.githubusercontent.com/TanakaDomp/uploder-db/main/uploads/tampilan_menu.jpeg",
-                mediaType: 1,
-                sourceUrl: 'https://www.tanakadomp.biz.id',
-                renderLargerThumbnail: true,
-                title: "Button Peler",
-                body: "Ɩylꪱc𝗁α𝗇 ხᦢƚ"
-            }
-        },
-        headerType: 1,
-        viewOnce: true
-    });*/
-            m.reply(results)
-        } else {
-            return await m.reply('No results');
-        }
-    } catch (error) {
-        console.error(`Error :`, error);
-        return await m.reply(`not found`);
-    }
-}
-break;
 case'deepsek':
 case'chinaai':{
     if(!text)return m.reply('Apa Yang Ingin Kamu Tanyakan Hari Ini?')
@@ -1482,7 +2266,7 @@ break
 
 case "ceklist": case "listreq": {
     if(!isCreator) return m.reply(mess.owner)
-const kontributor = JSON.parse(fs.readFileSync('./Storage/list.json', "utf8")) 
+const kontributor = JSON.parse(fs.readFileSync('./Storage/request.json', "utf-8")) 
 if (kontributor.length < 1) return m.reply("Tida ada list yang tersedia")
 let teks = `\n *#- List*\n`
 for (let u of kontributor) {
@@ -1535,16 +2319,7 @@ Selamat Mengerjakan
     lilychan.sendMessage(towner, {video:fs.readFileSync('./Storage/VID-20250125-WA0005.mp4'), viewOnce:true})
 }
 break;
-case'totagm':{
-    if(/video|image/i.test(quoted.mime))return m.reply('mana gambar nya')
-        if (/video|image/i.test(quoted.mime)) return m.reply('kontol')
-let media = await m.quoted.download()
-let caption = m.text ? m.text : ''
-let member = groupMetadata.participants.map(v => v.id)
-lilychan.sendFile(m.chat, media, null, { caption: caption, mentions:[...member]})
 
-}
-break
 case'dbckup':{
     if(!isCreator) return m.reply(mess.owner)
     if(!text) return m.reply('sertakan nama file yang ingin di delete')
@@ -1560,37 +2335,6 @@ case'dbckup':{
         }
         lilychan.sendMessage(m.chat,{react:{text:'👍🏻',key:m.key}})
     })
-}
-break
-
-case 'rvo':{
-     let med = await quoted.download()
-     var medi = m.quoted.mtype ? 'videoMessage' : 'imageMessage' 
-     if(!medi === 'imageMessage'){
-await lilychan.sendMessage(m.chat,{image:med})
-         }else{
-             await lilychan.sendMessage(m.chat,{video:med})
-         }
-}
-break
-case 'rvo2':{
-    const fetch = require('node-fetch');
-const FormData = require('form-data');
-	var q = m.quoted ? m.quoted : m;
-try {
-        let media = await quoted.download();
-        const mediaBase64 = media.toString('base64');
-
-        const response = await axios.post('http://kinchan.sytes.net/catbox/upload', {
-            media: mediaBase64
-        });
-
-        const catbox = response.data.url;
-
-        await lilychan.sendMessage(m.chat, { image:{url:catbox}},{ quoted: m });
-    } catch (e) {
-        await lilychan.sendMessage(m.chat, { text: `Terjadi kesalahan: ${e.message}` }, { quoted: m });
-    }
 }
 break
 
@@ -1711,7 +2455,7 @@ case 'backup': {
     });
 }
 break;
-case 'spotifysearch2': {
+case 'spotifysearch': {
     const { bold, quote } = require("@mengkodingan/ckptw");
     const axios = require("axios");
 
@@ -1808,39 +2552,51 @@ case'kerangajaib':{
 }, {quoted : lilychan.chat})
 }
 break
-case 'bratvid': {
+case "bratvid":{
+const fs = require('fs');
+const fetch = require('node-fetch');
+const { exec } = require('child_process');
+const path = require('path');
 
-    lilychan.sendMessage(m.chat,{react:{text:'📥',key:m.key}})
-const quo = args.length >= 1 ? args.join(" ") : m.quoted?.text || m.quoted?.caption || m.quoted?.description || null;
-  
-  if (!quo) return m.reply("masukan teksnya woii");
-  
-async function bratvid(text) {
-  try {
-    return await new Promise((resolve, reject) => {
-      if(!text) return reject("missing text input");
-      axios.get(`https://fgsi-brat.hf.space/?text=${text}&isVideo=true`, {
-        responseType: "arraybuffer"
-      }).then(res => {
-        const image = Buffer.from(res.data);
-        if(image.length <= 10240) return reject("failed generate brat");
-        return resolve({
-          success: true, 
-          image
-        })
-      })
-    })
-  } catch (e) {
-    return {
-      success: false,
-      errors: e
+
+let txt;
+
+    if (args.length >= 1) {
+        txt = args.slice(0).join(" ");
+    } else if (m.quoted && m.quoted.text) {
+        txt = m.quoted.text;
+    } else {
+        return m.reply("Input teks atau reply teks!");
     }
-  }
-}
+    if (!txt) throw `*• Example :* ${prefix + command} *[text]*`;
 
-const buf = await bratvid(quo);
-await lilychan.sendVideoAsSticker(m.chat, buf.image, m, { packname: `${pushname}\n\n\n\n\n`, author: '\n\n\n\n\nMizzuu • Assistant'})
-    lilychan.sendMessage(m.chat,{react:{text:'📤', key:m.key}})
+    let apiUrl = `https://fastrestapis.fasturl.cloud/maker/brat/animated?text=${encodeURIComponent(txt)}&mode=animated`;
+
+    try {
+        let response = await fetch(apiUrl);
+        if (!response.ok) throw new Error(`API error: ${response.statusText}`);
+
+        let buffer = await response.buffer();
+        let inputGif = path.join(__dirname, 'temp.gif');
+        let outputWebp = path.join(__dirname, 'temp.webp');
+
+        fs.writeFileSync(inputGif, buffer);
+
+        exec(`ffmpeg -i ${inputGif} -vcodec libwebp -filter:v fps=15 -lossless 1 ${outputWebp}`, async (err) => {
+            if (err) {
+                console.error("Error converting to WebP:", err);
+                return await m.reply(`❌ Error: ${err.message}`);
+            }
+
+            await lilychan.sendFile(m.chat, outputWebp, 'sticker.webp', '', m, { asSticker: true });
+
+            fs.unlinkSync(inputGif);
+            fs.unlinkSync(outputWebp);
+        });
+    } catch (e) {
+        console.error("Error in brat animated handler:", e);
+        await m.reply(`❌ Error: ${e.message}`);
+    }
 }
 break
 case 'qcr':case'qcrandom':  {
@@ -1937,7 +2693,8 @@ lilychan.sendFile(m.chat, stiker, 'sticker.webp', '', m)
 }
 break
 case "add": case "addmember":case'🤝': {
-if (!m.isGroup) return m.reply(msg.group)
+if(!isCreator) return m.reply(mess.owner)
+if (!m.isGroup) return m.reply(mess.group)
 if (!args[0]) return m.reply("62838XXX")
 var teks = text.replace(/[^0-9]/g, '')+'@s.whatsapp.net'
 var cek = await lilychan.onWhatsApp(`${teks.split("@")[0]}`)
@@ -2676,7 +3433,7 @@ case'payment': case'pay':{
     lilychan.sendMessage(from, {image: {url: global.thumbnail}, caption: kikir, }, {quoted:m})
 }
 break
-case 'smeme2': {
+case 'smeme': {
     const { fromBuffer } = require('file-type');
 
     async function tmpfiles(buffer) {
@@ -2962,7 +3719,7 @@ case'listproduk':case'mylist':{
     lilychan.sendMessage(m.chat, {text: agus, contextInfo: {mentionedJid: [m.sender], externalAdReply: {showAdAttribution: true, thumbnailUrl: global.thumbnail, title: `© ${global.ownername}`, body: null, sourceUrl: '', renderLargerThumbnail: true, mediaType: 1}}}, {quoted: m})
 }
 break
-case 'done':{
+case 'formatdone':{
     if(!isCreator) return m.reply('cot')
     let t = text.split(',')
     if(t.length < 2) return m.reply(`salah`)
@@ -3096,20 +3853,22 @@ m.reply(`${hanjing}`)
 break
 case 'tqto': 
 case 'thanksto': {
-    let caption = `ㅡㅈ Thanks To:
-TanakaDomp ( *Creator Script* )
-Avosky ( *Special Helpers* )
-Kaviaan ( *Scraper* )
-Mizzuu ( *Pembersih Hama* )
-Han ( *Minta Fitur* )
-Mecha ( *Minta Fitur* )
+    let caption = `
+╔─═「 *Thanks • To* 」
+│┏─⊱
+║▢ TanakaDomp ( *Creator Script* )
+│▢ Avosky ( *Special Helpers* )
+║▢ Kaviaan ( *Scraper* )
+│▢ Mecha ( Scraper )
+║┗─⊱
+╚─═─═─═─═─═─═─═⪩
 
 YOUR NAME?`
 
     await lilychan.sendMessage(m.key.remoteJid, {
         image: { url: 'https://raw.githubusercontent.com/TanakaDomp/uploder-db/main/uploads/senn_sed_boy.jpeg' },
         caption: caption,
-        footer: "© Ɩylꪱc𝗁α𝗇 ხᦢƚ",
+        /*footer: "© Ɩylꪱc𝗁α𝗇 ხᦢƚ",
         buttons:[
             {
                 buttonId: '.tes',
@@ -3120,7 +3879,7 @@ YOUR NAME?`
             }
         ],
         headerType: 1,
-        viewOnce: true
+        viewOnce: true*/
     }, { quoted: m });
 }
 break;
@@ -3218,27 +3977,6 @@ case 's': {
     }
 }
 break 
-
-case 'smeme': {
-    let respond = `Send/Reply image with caption ${prefix + command} txt-bawah|txt-atas`;
-    if (!/image/.test(mime)) return m.reply(respond);
-    if (!text) return m.reply(respond);
-
-    m.reply(mess.wait);
-    const atas = text.split('|')[0] ? text.split('|')[0] : '-';
-    const bawah = text.split('|')[1] ? text.split('|')[1] : '-';
-    
-    let dwnld = await lilychan.downloadAndSaveMediaMessage(qmsg);
-    let fatGans = await uploadToCatbox(dwnld);
-    let smeme = `https://api.memegen.link/images/custom/${encodeURIComponent(bawah)}/${encodeURIComponent(atas)}.png?background=${fatGans}`;
-    
-    let pop = await lilychan.sendImageAsSticker(m.chat, smeme, m, {
-        packname: packname,
-        author: author
-    });
-    fs.unlinkSync(pop);
-}
-break
 case 'brat': {
     let text;
 
@@ -3256,8 +3994,8 @@ case 'brat': {
 
     let ngawiStik = await getBuffer(`https://brat.caliphdev.com/api/brat?text=${encodeURIComponent(text)}`);
     await lilychan.sendImageAsSticker(m.chat, ngawiStik, m, {
-        packname: `𓄯ִ ── ꯭𐑈ƚꪱִ𝖼𝗄ᧉׄ𝗋 ᎓`,
-        author: `${pushname} ׄ 𝅄crᧉׄdı๋𝗍 : 森晓伟 ταიακαdοოρ.ხiz.id\nAt ${hariini}\n${time2}`
+        packname: global.packname,
+        author: global.author
     });
 }
 break;
