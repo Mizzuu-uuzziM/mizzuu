@@ -18,7 +18,7 @@ TIAP GW GA SIBUK GW UPDATE FITUR
 
 
 
-![Logo](https://files.catbox.moe/n60pjq.jpg)
+
 
 ```> Simple WhatsApp bot Using Library Baileys```
 
